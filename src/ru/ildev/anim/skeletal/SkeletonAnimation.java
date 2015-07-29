@@ -214,12 +214,12 @@ public class SkeletonAnimation extends ControllableAnimation {
     public void start() {
         super.start();
 
-        this.update();
+        this.update(0);
     }
 
     @Override
     public boolean stop(boolean gotoEnd) {
-        this.update();
+        this.update(0);
 
         return super.stop(gotoEnd);
     }
@@ -228,15 +228,15 @@ public class SkeletonAnimation extends ControllableAnimation {
     public void setPosition(float position) {
         super.setPosition(position);
 
-        this.update();
+        this.update(0);
     }
 
     /**
      * Обновляет скелет.
      */
     @Override
-    protected void update() {
-        if (this.skeleton == null) return;
+    protected boolean update(float elapsedTime) {
+        if (this.skeleton == null) return false;
 
         float duration = this.duration;
         float time = this.elapsedTime - this.delay - this.repeatDelay;
@@ -287,6 +287,8 @@ public class SkeletonAnimation extends ControllableAnimation {
             if (size >= 3) bone.setAngle(value[2]);
             if (size >= 4) bone.setLength(value[3]);
         }
+
+        return true;
     }
 
     @Override

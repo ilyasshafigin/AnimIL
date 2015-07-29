@@ -162,7 +162,7 @@ public class TimelineAnimation extends ControllableAnimation {
     }
 
     @Override
-    public void update() {
+    public boolean update(float elapsedTime) {
         for (Time time : this.timeline) {
             float t = time.animation.getTime(this.elapsedTime - time.startTime, this);
 
@@ -175,6 +175,7 @@ public class TimelineAnimation extends ControllableAnimation {
                 time.animation.step(0.0f);
             }
         }
+        return true;
     }
 
     @Override

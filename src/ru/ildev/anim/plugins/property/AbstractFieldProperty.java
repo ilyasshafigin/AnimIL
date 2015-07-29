@@ -60,8 +60,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
      * @param end       конечное значение.
      * @param evaluator
      */
-    public AbstractFieldProperty(String name, T begin, T end,
-                                 TypeEvaluator<T> evaluator) {
+    public AbstractFieldProperty(String name, T begin, T end, TypeEvaluator<T> evaluator) {
         super(name, begin, end, evaluator);
     }
 
@@ -74,8 +73,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
      * @param easing    эффект анимации.
      * @param evaluator
      */
-    public AbstractFieldProperty(String name, T end, Easing easing,
-                                 TypeEvaluator<T> evaluator) {
+    public AbstractFieldProperty(String name, T end, Easing easing, TypeEvaluator<T> evaluator) {
         super(name, end, easing, evaluator);
     }
 
@@ -89,8 +87,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
      * @param easing    эффект анимации.
      * @param evaluator
      */
-    public AbstractFieldProperty(String name, T begin, T end, Easing easing,
-                                 TypeEvaluator<T> evaluator) {
+    public AbstractFieldProperty(String name, T begin, T end, Easing easing, TypeEvaluator<T> evaluator) {
         super(name, begin, end, easing, evaluator);
     }
 
@@ -102,8 +99,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
      * @param value     значение.
      * @param evaluator
      */
-    public AbstractFieldProperty(String name, String operation, T value,
-                                 TypeEvaluator<T> evaluator) {
+    public AbstractFieldProperty(String name, String operation, T value, TypeEvaluator<T> evaluator) {
         super(name, operation, value, evaluator);
     }
 
@@ -117,8 +113,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
      * @param easing    эффект анимации.
      * @param evaluator
      */
-    public AbstractFieldProperty(String name, String operation, T value,
-                                 Easing easing, TypeEvaluator<T> evaluator) {
+    public AbstractFieldProperty(String name, String operation, T value, Easing easing, TypeEvaluator<T> evaluator) {
         super(name, operation, value, easing, evaluator);
     }
 
@@ -150,7 +145,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
                     }
                 } else {
                     try {
-                        this.field = this.target.getClass().getDeclaredField(name);
+                        this.field = this.target.getClass().getDeclaredField(this.name);
                     } catch (NoSuchFieldException | SecurityException throwable) {
                         this.field = this.target.getClass().getField(this.name);
                     }
@@ -187,8 +182,7 @@ public class AbstractFieldProperty<T> extends AbstractProperty<T> implements Fie
         try {
             return (T) this.field.get(this.target);
         } catch (IllegalArgumentException | IllegalAccessException exception) {
-            AnimationPlugin.LOGGER.throwing(this.getClass().getName(), "get",
-                    exception);
+            AnimationPlugin.LOGGER.throwing(this.getClass().getName(), "get", exception);
             return null;
         }
     }

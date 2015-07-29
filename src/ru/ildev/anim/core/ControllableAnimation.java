@@ -99,7 +99,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
     protected int playMode;
 
     /**
-     * Пройденное время после начала цикла анимации.
+     * Пройденное время после начала цикла анимации. В это время входит задержка перед анимацией.
      */
     protected float elapsedTime;
     /**
@@ -396,13 +396,15 @@ public class ControllableAnimation implements Animation, AnimationConstants {
     public void setElapsedTime(float elapsedTime) {
         if (elapsedTime < 0.0f) throw new IllegalArgumentException("elapsedTime < 0");
 
+        this.elapsedTime = 0.0f;
+        this.currentTime = 0.0f;
+
         //
         elapsedTime *= this.timeScale;
         // Если пройденное время некорректно.
         if (elapsedTime <= 0.0f) return;
 
         this.elapsedTime = elapsedTime;
-        this.currentTime = 0.0f;
     }
 
     /**
@@ -416,11 +418,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
             return this.elapsedTime;
         } else {
             // Расчитываем и возвращаем пройденное время.
-            if (this.completedRepeat == 0) {
-                return this.elapsedTime; // В elapsedTime уже входит задержка
-            } else {
-                return this.delay + this.elapsedTime + (this.duration + this.repeatDelay) * this.completedRepeat;
-            }
+            return this.elapsedTime + (this.duration + this.repeatDelay) * this.completedRepeat;
         }
     }
 
@@ -451,7 +449,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
             this.completedRepeat = 0;
             this.elapsedTime = totalElapsedTime;
         } else {
-            // dt = delay + elapsedTime + (duration + repeatDelay) * completedRepeat
+            // dt = elapsedTime + (duration + repeatDelay) * completedRepeat
             //
             float t = totalElapsedTime - (this.duration + this.delay + this.repeatDelay);
             if (t <= 0.0f) {
@@ -565,6 +563,14 @@ public class ControllableAnimation implements Animation, AnimationConstants {
     }
 
     /**
+     * Определяет, можно ли удалить анимацию из аниматора.
+     * @return {@code true}, если можно удалить анимацию.
+     */
+    protected boolean canRemove() {
+        return this.state == State.REMOVE || this.state == State.STOP;
+    }
+
+    /**
      * Определяет, начался ли цикл анимации.
      *
      * @return {@code true}, если начался цикл анимации.
@@ -592,7 +598,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
 
         // Определяем, закончилась ли анимация.
         if (this.completedRepeat == 0) {
-            return this.elapsedTime >= this.duration + this.delay;
+            return this.elapsedTime >= this.duration + this.delay + this.repeatDelay;
         } else {
             return this.elapsedTime >= this.duration + this.repeatDelay;
         }
@@ -603,7 +609,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
      *
      * @param options опции.
      */
-    protected ControllableAnimation copy(AnimationOptions options) {
+    public ControllableAnimation copy(AnimationOptions options) {
         if (options == null) throw new NullPointerException("options == null");
 
         this.duration = options.duration;
@@ -633,7 +639,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
      * @param target  анимируемый объект.
      * @param options опции.
      */
-    protected ControllableAnimation copy(Object target, AnimationOptions options) {
+    public ControllableAnimation copy(Object target, AnimationOptions options) {
         // if(target == null) throw new NullPointerException("target == null");
         if (options == null) throw new NullPointerException("options == null");
 
@@ -663,11 +669,11 @@ public class ControllableAnimation implements Animation, AnimationConstants {
     public void start() {
         // Если анимация уже запущена, то выходим.
         if (this.state == State.START) return;
-        // Если анимация приостановлена, то выходим.
-        if (this.state == State.PAUSE) return;
         // Если анимация будет удалена, то выходим.
         if (this.state == State.REMOVE) return;
 
+        // Сбрасываем текущее состояние.
+        this.reset();
         // Устанавливаем состояние.
         this.state = State.START;
     }
@@ -675,9 +681,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
     @Override
     public boolean step(float elapsedTime) {
         // Если анимацию нужно удалить.
-        if (this.state == State.REMOVE) return true;
-        // Если анимация остановлена.
-        if (this.state == State.STOP) return true;
+        if (this.canRemove()) return true;
         // Если на паузе.
         if (this.state == State.PAUSE) return false;
 
@@ -692,30 +696,31 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         if (!this.isBegin && this.isBegin()) {
             this.isBegin = true;
             if (this.completedRepeat == 0) {
-                this.fireEvent(AnimationEvent.BEGIN, this);
+                this.fireEvent(AnimationEvent.BEGIN);
             }
-            this.fireEvent(AnimationEvent.START, this);
+            this.fireEvent(AnimationEvent.START);
         }
 
         // Обновляем
-        this.update();
+        boolean isEnd = !this.update(elapsedTime);
 
         // Запускаем событие
-        this.fireEvent(AnimationEvent.STEP, this);
+        this.fireEvent(AnimationEvent.STEP);
 
         // Если анимация закончилась.
-        if (this.isEnd()) {
+        if (isEnd || this.isEnd()) {
             // Запускаем событие.
-            this.fireEvent(AnimationEvent.END, this);
+            this.fireEvent(AnimationEvent.END);
 
             this.repeat();
 
             // Если нет возможности продолжать анимацию.
             if (!this.canRepeat()) {
                 // Запускаем событие
-                this.fireEvent(AnimationEvent.COMPLETE, this);
+                this.fireEvent(AnimationEvent.COMPLETE);
                 // Устанавливаем состояние.
                 this.state = State.STOP;
+                return true;
             }
         }
         //
@@ -734,7 +739,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         // Устанавливаем состояние.
         this.state = State.PAUSE;
         // Запускаем событие.
-        this.fireEvent(AnimationEvent.PAUSE, this);
+        this.fireEvent(AnimationEvent.PAUSE);
     }
 
     /**
@@ -747,7 +752,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         // Устанавливаем состояние.
         this.state = State.START;
         // Запускаем событие.
-        this.fireEvent(AnimationEvent.RESUME, this);
+        this.fireEvent(AnimationEvent.RESUME);
     }
 
     /**
@@ -755,7 +760,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
      */
     public void restart() {
         // Запускаем событие.
-        this.fireEvent(AnimationEvent.RESTART, this);
+        this.fireEvent(AnimationEvent.RESTART);
         // Сбрасываем время.
         this.reset();
         // Устанавливаем состояние.
@@ -773,7 +778,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         if (this.completedRepeat != 1) {
             this.elapsedTime -= this.duration + this.repeatDelay;
         } else {
-            this.elapsedTime -= this.duration + this.delay;
+            this.elapsedTime -= this.duration + this.delay + this.repeatDelay;
         }
     }
 
@@ -786,7 +791,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         if (this.duration == DURATION_INFINITE) return;
         // Изменяем пройденной время
         if (this.completedRepeat == 0) {
-            this.elapsedTime = this.duration + this.delay;
+            this.elapsedTime = this.duration + this.delay + this.repeatDelay;
         } else {
             this.elapsedTime = this.duration + this.repeatDelay;
         }
@@ -815,7 +820,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         // Устанавливаем состояние.
         this.state = State.STOP;
         // Запускаем событие.
-        this.fireEvent(AnimationEvent.STOP, this);
+        this.fireEvent(AnimationEvent.STOP);
         // Если нужно закончить анимацию элемента.
         if (gotoEnd) {
             this.end();
@@ -840,12 +845,16 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         this.elapsedTime = 0.0f;
         this.currentTime = 0.0f;
         this.completedRepeat = 0;
+        this.isBegin = false;
     }
 
     /**
      * Абстрактный метод обновления.
+     * @param elapsedTime пройденное время в миллисекундах
+     * @return {@code false}, если необходимо остановить анимацию.
      */
-    protected void update() {
+    protected boolean update(float elapsedTime) {
+        return true;
     }
 
     /**
@@ -896,7 +905,7 @@ public class ControllableAnimation implements Animation, AnimationConstants {
         }
 
         // Запускаем событие кадра анимации.
-        this.fireEvent(AnimationEvent.STEP, this);
+        this.fireEvent(AnimationEvent.STEP);
 
         return true;
     }
@@ -905,11 +914,10 @@ public class ControllableAnimation implements Animation, AnimationConstants {
      * Запускает событие анимации.
      *
      * @param type      тип события.
-     * @param animation объект анимации.
      */
-    protected void fireEvent(int type, ControllableAnimation animation) {
+    protected void fireEvent(int type) {
         if (this.listener != null && (this.triggers & type) > 0) {
-            this.listener.onEvent(new AnimationEvent(animation, type));
+            this.listener.onEvent(new AnimationEvent(this, type));
         }
     }
 

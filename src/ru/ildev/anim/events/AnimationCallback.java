@@ -566,6 +566,7 @@ public class AnimationCallback implements AnimationListener {
             case AnimationEvent.STEP:
                 method = this.onStepMethod;
                 args = this.onStepParameterClass == null ? new Object[]{} : new Object[]{event};
+                break;
         }
 
         if (method != null) {

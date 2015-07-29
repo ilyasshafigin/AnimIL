@@ -57,6 +57,10 @@ public class AnimationEvent {
      * Событие шага анимации
      */
     public static final int STEP = 1 << 8;
+    /**
+     * Триггер всех событий
+     */
+    public static final int ALL = 0xff;
 
     /**
      * Анимация.

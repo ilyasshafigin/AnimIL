@@ -61,8 +61,8 @@ public abstract class AbstractProperty<T> implements Property<T> {
      */
     public AbstractProperty(String name, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
+
         this.name = name;
         this.evaluator = evaluator;
         this.setState(SETUP, true);
@@ -77,9 +77,9 @@ public abstract class AbstractProperty<T> implements Property<T> {
      */
     public AbstractProperty(String name, T end, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
         if (end == null) throw new NullPointerException("end == null");
+
         this.name = name;
         this.evaluator = evaluator;
         this.end = end;
@@ -93,13 +93,12 @@ public abstract class AbstractProperty<T> implements Property<T> {
      * @param end       конечное значение.
      * @param evaluator
      */
-    public AbstractProperty(String name, T begin, T end,
-                            TypeEvaluator<T> evaluator) {
+    public AbstractProperty(String name, T begin, T end, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
         if (begin == null) throw new NullPointerException("begin == null");
         if (end == null) throw new NullPointerException("end == null");
+
         this.name = name;
         this.evaluator = evaluator;
         this.begin = begin;
@@ -116,12 +115,11 @@ public abstract class AbstractProperty<T> implements Property<T> {
      * @param easing    эффект анимации.
      * @param evaluator
      */
-    public AbstractProperty(String name, T end, Easing easing,
-                            TypeEvaluator<T> evaluator) {
+    public AbstractProperty(String name, T end, Easing easing, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
         if (end == null) throw new NullPointerException("end == null");
+
         this.name = name;
         this.evaluator = evaluator;
         this.end = end;
@@ -138,11 +136,9 @@ public abstract class AbstractProperty<T> implements Property<T> {
      * @param easing    эффект анимации.
      * @param evaluator
      */
-    public AbstractProperty(String name, T begin, T end, Easing easing,
-                            TypeEvaluator<T> evaluator) {
+    public AbstractProperty(String name, T begin, T end, Easing easing, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
         if (begin == null) throw new NullPointerException("begin == null");
         if (end == null) throw new NullPointerException("end == null");
 
@@ -162,12 +158,11 @@ public abstract class AbstractProperty<T> implements Property<T> {
      * @param value     значение.
      * @param evaluator
      */
-    public AbstractProperty(String name, String operation, T value,
-                            TypeEvaluator<T> evaluator) {
+    public AbstractProperty(String name, String operation, T value, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
         if (value == null) throw new NullPointerException("value == null");
+
         this.name = name;
         this.evaluator = evaluator;
         this.operation = operation;
@@ -184,11 +179,9 @@ public abstract class AbstractProperty<T> implements Property<T> {
      * @param easing    эффект анимации.
      * @param evaluator
      */
-    public AbstractProperty(String name, String operation, T value,
-                            Easing easing, TypeEvaluator<T> evaluator) {
+    public AbstractProperty(String name, String operation, T value, Easing easing, TypeEvaluator<T> evaluator) {
         if (name == null) throw new NullPointerException("name == null");
-        if (evaluator == null) throw new NullPointerException(
-                "evaluator == null");
+        if (evaluator == null) throw new NullPointerException("evaluator == null");
         if (value == null) throw new NullPointerException("value == null");
 
         this.name = name;
@@ -282,7 +275,7 @@ public abstract class AbstractProperty<T> implements Property<T> {
 
     @Override
     public void begin(ControllableAnimation animation) {
-        if (this.hasState(INITIALIZE) && !this.hasState(INITIALIZE)) {
+        if (this.hasState(INITIALIZE) && !this.hasState(SETUP)) {
             this.begin = this.get();
 
             // Если начального или конечного значений нет.

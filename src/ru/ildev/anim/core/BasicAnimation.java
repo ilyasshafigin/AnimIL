@@ -76,8 +76,7 @@ public class BasicAnimation extends ControllableAnimation {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
-        AnimationOptions options = new AnimationOptions(duration, easing,
-                listener);
+        AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Запускаем инициализацию.
         this.initialize(plugins, options);
     }
@@ -163,8 +162,7 @@ public class BasicAnimation extends ControllableAnimation {
         super();
 
         // Создаем объект опций анимации.
-        AnimationOptions options = new AnimationOptions(duration, easing,
-                listener);
+        AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Запускаем инициализацию.
         this.initialize(plugins, options);
     }
@@ -435,9 +433,11 @@ public class BasicAnimation extends ControllableAnimation {
     }
 
     @Override
-    public void update() {
+    public boolean update(float elapsedTime) {
         // Обновляем плагины.
         this.plugins.update(this);
+
+        return true;
     }
 
     @Override

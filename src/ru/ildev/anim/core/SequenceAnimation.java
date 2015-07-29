@@ -3,18 +3,18 @@
  */
 package ru.ildev.anim.core;
 
+import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 import ru.ildev.utils.Builder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Класс анимации, которая объединяет сразу несколько анимаций, которые будут
  * запускаться последовательно.
+ * Длительность анимации определяется количеством и длительностью дочерних анимаций.
  *
+ * @todo Задержки данной анимации
  * @author Shafigin Ilyas (Шафигин Ильяс)
  * @version 0.2.5
  */
@@ -32,9 +32,9 @@ public class SequenceAnimation extends ControllableAnimation {
     /**
      * Конструктор, устанавливающий очередь и опции анимации.
      *
-     * @param oneRun  очередь.
+     * @param oneRun  анимировать по одному элементу?
      * @param options опции анимации.
-     * @param queue
+     * @param queue   очередь.
      */
     protected SequenceAnimation(Queue queue, AnimationOptions options, boolean oneRun) {
         super();
@@ -76,7 +76,7 @@ public class SequenceAnimation extends ControllableAnimation {
      * Конструктор, устанавливающий опции анимации.
      *
      * @param options опции анимации.
-     * @param oneRun
+     * @param oneRun  анимировать по одному элементу?
      */
     public SequenceAnimation(AnimationOptions options, boolean oneRun) {
         super();
@@ -85,6 +85,7 @@ public class SequenceAnimation extends ControllableAnimation {
         this.queue = new Queue();
         this.oneRun = oneRun;
         this.copy(options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -238,12 +239,12 @@ public class SequenceAnimation extends ControllableAnimation {
         // Останавливаем анимацию.
         removed.animation.stop(gotoEnd);
 
-        float duration = removed.animation.getTotalDurationInMilliseconds();
+        float duration = this.getTimeFromTimeMode(removed.animation.getTotalDurationInMilliseconds());
         // Обновляем пройденное время и продолжительность анимации очереди.
         if (currentIndex >= index) {
-            this.elapsedTime -= this.getTimeFromTimeMode(duration);
+            this.elapsedTime -= duration;
         }
-        this.duration -= this.getTimeFromTimeMode(duration);
+        this.duration -= duration;
 
         // Если удаляем активный элемент,
         if (currentIndex == index) {
@@ -283,12 +284,12 @@ public class SequenceAnimation extends ControllableAnimation {
         // Останавливаем анимацию.
         removed.animation.stop(gotoEnd);
 
-        float duration = removed.animation.getTotalDurationInMilliseconds();
+        float duration = this.getTimeFromTimeMode(removed.animation.getTotalDurationInMilliseconds());
         // Обновляем пройденное время и продолжительность анимации очереди.
         if (currentIndex >= index) {
-            this.elapsedTime -= this.getTimeFromTimeMode(duration);
+            this.elapsedTime -= duration;
         }
-        this.duration -= this.getTimeFromTimeMode(duration);
+        this.duration -= duration;
 
 
         // Если удаляем активный элемент,
@@ -315,31 +316,33 @@ public class SequenceAnimation extends ControllableAnimation {
             Element current = this.queue.current();
             // Останавливаем анимацию.
             current.animation.stop(true);
+            // Запускаем событие
+            this.fireEvent(AnimationEvent.STOP);
         }
 
         // Находим элемент.
         Element started = this.queue.get(index);
-//        // Если его нет, то останавливаем анимацию.
-//        if(started == null) {
-//            // Устанавливаем состояние.
-//            this.state = State.STOP;
-//            // Выходим.
-//            return;
-//        }
+        // Если его нет, то останавливаем анимацию.
+        if (started == null) {
+            // Устанавливаем состояние.
+            this.state = State.STOP;
+            // Выходим.
+            return;
+        }
         // Устанавливаем состояние.
         this.state = State.START;
         // Устанавливаем индекс активного элемента.
         this.queue.currentIndex = index;
-        // Запускаем анимацию.
-        started.animation.start();
-
         // Обновляем пройденное время анимации очереди.
         this.reset();
-        this.elapsedTime = 0.0f;
         for (int i = 0; i < index; i++) {
             Element element = this.queue.get(i);
             this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
         }
+
+        // Запускаем анимацию.
+        //started.animation.reset();
+        started.animation.start();
     }
 
     /**
@@ -358,101 +361,84 @@ public class SequenceAnimation extends ControllableAnimation {
             Element current = this.queue.current();
             // Останавливаем анимацию.
             current.animation.stop(true);
+            // Запускаем событие
+            this.fireEvent(AnimationEvent.STOP);
         }
 
         // Находим элемент.
         Element started = this.queue.get(name);
-        //
-        int index = this.queue.indexOf(started);
-//        // Если его нет, то останавливаем анимацию.
-//        if(started == null) {
-//            // Устанавливаем состояние.
-//            this.state = State.STOP;
-//            // Выходим.
-//            return;
-//        }
+        // Если его нет, то останавливаем анимацию.
+        if (started == null) {
+            // Устанавливаем состояние.
+            this.state = State.STOP;
+            // Выходим.
+            return;
+        }
         // Устанавливаем состояние.
         this.state = State.START;
         // Учтанавливаем индекс активного элемента.
         this.queue.currentIndex = this.queue.indexOf(started);
-        // Запускаем анимацию.
-        started.animation.start();
-
         // Обновляем пройденное время анимации очереди.
         this.reset();
-        this.elapsedTime = 0.0f;
-        for (int i = 0; i < index; i++) {
-            Element element = this.queue.get(i);
-            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
-        }
+        //for (int i = 0; i < this.queue.currentIndex; i++) {
+        //    Element element = this.queue.get(i);
+        //    this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
+        //}
+
+        // Запускаем анимацию.
+        //started.animation.reset();
+        started.animation.start();
+    }
+
+    @Override
+    protected boolean canRemove() {
+        return this.state == State.REMOVE;
     }
 
     @Override
     public void start() {
         // Если анимация уже запущена, то выходим.
         if (this.state == State.START) return;
-        // Если анимацию нужно удалить, то выходим.
+        // Если анимация будет удалена, то выходим.
         if (this.state == State.REMOVE) return;
 
         // Если очередь пуста, то останавливаем анимацию и выходим.
         if (this.queue.size() == 0) {
-            this.state = State.STOP;
             return;
         }
 
         // Устанавливаем состояние.
         this.state = State.START;
-
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Перезапускаем активную анимацию.
-        current.animation.restart();
+        // Сбрасываем состояние
+        this.reset();
+        //for (int i = 0; i < this.queue.currentIndex; i++) {
+        //    Element element = this.queue.get(i);
+        //    this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
+        //}
 
-        this.elapsedTime = 0.0f;
-        for (int i = 0; i < this.queue.currentIndex; i++) {
-            Element element = this.queue.get(i);
-            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
-        }
+        // Перезапускаем активную анимацию.
+        //current.animation.reset();
+        current.animation.start();
     }
 
     @Override
-    public boolean step(float elapsedTime) {
-        // Если необходимо удалить данную анимацию.
-        if (this.state == State.REMOVE) return true;
-        // Если анимация остановлена.
-        if (this.state == State.STOP) return false;
-        // Если на паузе.
-        if (this.state == State.PAUSE) return false;
-
-        // Если пройденное время некорректно, то выходим.
-        //if(elapsedTime <= 0.0f) return false;
-        //if(elapsedTime == 0.0f) return false;
-
+    protected boolean update(float elapsedTime) {
         // Находим активный элемент.
         Element current = this.queue.current();
         // Запускаем шаг активной анимации.
         current.animation.step(current.animation.getTimeFromTimeMode(elapsedTime));
 
         // Обновляем пройденное время анимации очереди.
-        this.elapsedTime = this.getTimeFromTimeMode(current.animation.getTotalElapsedTimeInMilliseconds());
-        for (int i = 0; i < this.queue.currentIndex; i++) {
-            Element element = this.queue.get(i);
-            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
-        }
+        //this.elapsedTime = this.getTimeFromTimeMode(current.animation.getTotalElapsedTimeInMilliseconds());
+        //for (int i = 0; i < this.queue.currentIndex; i++) {
+        //    Element element = this.queue.get(i);
+        //    this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
+        //}
 
-        // Если анимация закончилась.
-        if (current.animation.isStop()) this.next();
-        //
-        return false;
-    }
-
-    /**
-     * Метод перехода на следующий цикл повторений анимации или на следующий
-     * элемент очереди.
-     */
-    private void next() {
-        // Находим активный элемент.
-        Element current;
+        // Если анимация еще не закончилась.
+        if (!current.animation.isStop()) return true;
 
         // Если включено анимирование по очереди.
         if (!this.oneRun) {
@@ -460,23 +446,30 @@ public class SequenceAnimation extends ControllableAnimation {
             if (this.queue.canNext()) {
                 // Переходим на следующий элемент.
                 current = this.queue.next();
-                //
+                // Запускаем его.
                 current.animation.start();
             } else {
-                //
+                // Повтор
                 this.repeat();
                 // Если есть возможность повторить анимацию.
                 if (this.canRepeat()) {
-                    this.queue.reset();
+                    // Запускаем событие.
+                    this.fireEvent(AnimationEvent.END);
+                    // Сбрасываем параметры
+                    this.reset();
+                    // Переходим на следующий элемент.
+                    current = this.queue.current();
+                    // Запускаем его.
+                    current.animation.start();
                 } else {
-                    // Устанавливаем состояние.
-                    this.state = State.STOP;
+                    return false;
                 }
             }
         } else {
-            // Устанавливаем состояние.
-            this.state = State.STOP;
+            return false;
         }
+
+        return true;
     }
 
     @Override
@@ -491,10 +484,22 @@ public class SequenceAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Находим активную анимацию.
-        ControllableAnimation canimation = current.animation;
         // Приостаналиваем ее.
-        canimation.pause();
+        current.animation.pause();
+    }
+
+    @Override
+    public void resume() {
+        // Если анимация не на паузе, то выходим.
+        if (this.state != State.PAUSE) return;
+
+        // Устанавливаем состояние.
+        this.state = State.START;
+
+        // Находим активный элемент.
+        Element current = this.queue.current();
+        // Приостаналиваем ее.
+        current.animation.resume();
     }
 
     @Override
@@ -521,14 +526,10 @@ public class SequenceAnimation extends ControllableAnimation {
         if (this.state == State.STOP) {
             // Если нужно очистить очередь.
             if (clear) {
-                // Сбрасываем параметры анимации.
-                this.reset();
-                this.duration = 0.0f;
-                // Очищаем очередь.
-                this.queue.clear();
+                this.clear();
             }
             // Выходим.
-            return false;
+            return true;
         }
 
         // Устанавливает состояние.
@@ -548,10 +549,25 @@ public class SequenceAnimation extends ControllableAnimation {
             // Если не нужно очищать очередь,
             if (!clear) {
                 // то переходим к следующему элементу очереди.
-                this.next();
-                // Сбрасываем параметры анимации.
-                this.reset();
-                this.duration = 0.0f;
+                // Если есть возможность перехода следующий элемент.
+                if (this.queue.canNext()) {
+                    // Переходим на следующий элемент.
+                    current = this.queue.next();
+                } else {
+                    // Запускаем событие.
+                    this.fireEvent(AnimationEvent.END);
+                    //
+                    this.repeat();
+                    // Если есть возможность повторить анимацию.
+                    if (this.canRepeat()) {
+                        // Сбрасываем параметры
+                        this.reset();
+                    } else {
+                        // Запускаем событие
+                        this.fireEvent(AnimationEvent.COMPLETE);
+                        return true;
+                    }
+                }
                 // Выходим.
                 return true;
             }
@@ -559,11 +575,7 @@ public class SequenceAnimation extends ControllableAnimation {
 
         // Если нужно очистить очередь.
         if (clear) {
-            // Сбрасываем параметры анимации.
-            this.reset();
-            this.duration = 0.0f;
-            // Очищаем очередь.
-            this.queue.clear();
+            this.clear();
         }
 
         return true;
@@ -572,19 +584,15 @@ public class SequenceAnimation extends ControllableAnimation {
     @Override
     public void restart() {
         super.restart();
-        // Сбрасываем параметры очереди.
-        this.queue.reset();
         // Сбрасываем параметры анимации.
         this.reset();
-        this.duration = 0.0f;
-        // Проходим по анимациям очереди.
-        int qSize = this.queue.size();
-        for (int i = 0; i < qSize; i++) {
-            // Находим активный элемент.
-            Element element = this.queue.get(i);
-            // Сбрасываем параметры анимации.
-            element.animation.reset();
-        }
+    }
+
+    @Override
+    protected void reset() {
+        super.reset();
+        // Сбрасываем очередь.
+        this.queue.reset();
     }
 
     /**
@@ -656,12 +664,6 @@ public class SequenceAnimation extends ControllableAnimation {
         protected ControllableAnimation animation = null;
 
         /**
-         * Стандартный конструктор.
-         */
-        protected Element() {
-        }
-
-        /**
          * Конструктор, устанавливающий анимацию
          *
          * @param animation анимация.
@@ -707,7 +709,7 @@ public class SequenceAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 0.0.0
      */
-    protected static class Queue {
+    static class Queue implements Iterable<Element> {
 
         /**
          * Список анимаций очереди.
@@ -884,6 +886,9 @@ public class SequenceAnimation extends ControllableAnimation {
          */
         void reset() {
             this.currentIndex = 0;
+            for (Element element : this.list) {
+                element.animation.reset();
+            }
         }
 
         /**
@@ -904,6 +909,10 @@ public class SequenceAnimation extends ControllableAnimation {
             return this.list.size();
         }
 
+        @Override
+        public Iterator<Element> iterator() {
+            return this.list.iterator();
+        }
     }
 
     /**
