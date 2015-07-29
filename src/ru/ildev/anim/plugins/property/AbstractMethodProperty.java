@@ -3,7 +3,7 @@
  */
 package ru.ildev.anim.plugins.property;
 
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.easings.Easing;
 import ru.ildev.anim.plugins.AnimationPlugin;
 import ru.ildev.anim.plugins.property.evaluator.TypeEvaluator;
@@ -171,8 +171,8 @@ public class AbstractMethodProperty<T> extends AbstractProperty<T> implements Me
     }
 
     @Override
-    public void initialize(AnimationParameters parameters) {
-        super.initialize(parameters);
+    public void initialize(ControllableAnimation animation) {
+        super.initialize(animation);
 
         if (this.get == null || this.set == null) {
             Method get, set;

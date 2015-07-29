@@ -4,7 +4,6 @@
 package ru.ildev.anim.core;
 
 import ru.ildev.anim.easings.Easing;
-import ru.ildev.anim.events.AnimationAdapter;
 import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 import ru.ildev.anim.plugins.AnimationPlugin;
@@ -42,8 +41,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции анимации.
      * @param oneRun
      */
-    protected QueueAnimation(Queue queue, AnimationOptions options,
-                             boolean oneRun) {
+    protected QueueAnimation(Queue queue, AnimationOptions options, boolean oneRun) {
         super();
 
         if (queue == null) throw new NullPointerException("queue == null");
@@ -51,8 +49,8 @@ public class QueueAnimation extends ControllableAnimation {
 
         this.queue = queue;
         this.one = oneRun;
-        this.parameters.copy(options);
-        this.parameters.duration = this.parameters.getTimeFromTimeMode(queue.getDuration());
+        this.copy(options);
+        this.duration = this.getTimeFromTimeMode(queue.getDuration());
     }
 
     /**
@@ -77,8 +75,8 @@ public class QueueAnimation extends ControllableAnimation {
         if (options == null) throw new NullPointerException("options == null");
 
         this.queue = new Queue();
-        this.parameters.copy(options);
-        this.parameters.duration = 0.0f;
+        this.copy(options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -108,8 +106,8 @@ public class QueueAnimation extends ControllableAnimation {
 
         this.queue = new Queue();
         this.one = oneRun;
-        this.parameters.copy(options);
-        this.parameters.duration = 0.0f;
+        this.copy(options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -120,8 +118,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции анимации.
      * @param oneRun
      */
-    protected QueueAnimation(Object target, Queue queue,
-                             AnimationOptions options, boolean oneRun) {
+    protected QueueAnimation(Object target, Queue queue, AnimationOptions options, boolean oneRun) {
         super();
 
         if (target == null) throw new NullPointerException("target == null");
@@ -131,8 +128,8 @@ public class QueueAnimation extends ControllableAnimation {
         this.target = target;
         this.queue = queue;
         this.one = oneRun;
-        this.parameters.copy(target, options);
-        this.parameters.duration = this.parameters.getTimeFromTimeMode(queue.getDuration());
+        this.copy(target, options);
+        this.duration = this.getTimeFromTimeMode(queue.getDuration());
     }
 
     /**
@@ -148,7 +145,6 @@ public class QueueAnimation extends ControllableAnimation {
 
         this.target = target;
         this.queue = new Queue();
-        this.parameters.target = target;
     }
 
     /**
@@ -166,8 +162,8 @@ public class QueueAnimation extends ControllableAnimation {
 
         this.target = target;
         this.queue = new Queue();
-        this.parameters.copy(target, options);
-        this.parameters.duration = 0.0f;
+        this.copy(target, options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -185,7 +181,6 @@ public class QueueAnimation extends ControllableAnimation {
         this.target = target;
         this.queue = new Queue();
         this.one = oneRun;
-        this.parameters.target = target;
     }
 
     /**
@@ -196,8 +191,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции анимации.
      * @param oneRun
      */
-    public QueueAnimation(Object target, AnimationOptions options,
-                          boolean oneRun) {
+    public QueueAnimation(Object target, AnimationOptions options, boolean oneRun) {
         super();
 
         if (target == null) throw new NullPointerException("target == null");
@@ -206,8 +200,8 @@ public class QueueAnimation extends ControllableAnimation {
         this.target = target;
         this.queue = new Queue();
         this.one = oneRun;
-        this.parameters.copy(target, options);
-        this.parameters.duration = 0.0f;
+        this.copy(target, options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -276,8 +270,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public void insert(AnimationPlugin plugin, float duration, Easing easing,
-                       AnimationListener listener) {
+    public void insert(AnimationPlugin plugin, float duration, Easing easing, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -293,8 +286,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public void insert(AnimationPlugin plugin, float duration,
-                       AnimationListener listener) {
+    public void insert(AnimationPlugin plugin, float duration, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -351,8 +343,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public void insert(PluginList plugins, float duration, Easing easing,
-                       AnimationListener listener) {
+    public void insert(PluginList plugins, float duration, Easing easing, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Добавляем элемент в очередь.
@@ -366,8 +357,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public void insert(PluginList plugins, float duration,
-                       AnimationListener listener) {
+    public void insert(PluginList plugins, float duration, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, listener);
         // Добавляем элемент в очередь.
@@ -392,15 +382,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новый элемент очереди анимаций.
-        Element element = new Element(plugins, parameters);
+        Element element = new Element(plugins, animation);
         // Добавляем ее в конец списка.
         this.queue.add(element);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -427,8 +417,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param easing   эффект анимации.
      */
-    public void insert(int index, AnimationPlugin plugin, float duration,
-                       Easing easing) {
+    public void insert(int index, AnimationPlugin plugin, float duration, Easing easing) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -446,8 +435,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public void insert(int index, AnimationPlugin plugin, float duration,
-                       Easing easing, AnimationListener listener) {
+    public void insert(int index, AnimationPlugin plugin, float duration, Easing easing, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -464,8 +452,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public void insert(int index, AnimationPlugin plugin, float duration,
-                       AnimationListener listener) {
+    public void insert(int index, AnimationPlugin plugin, float duration, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -510,8 +497,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param easing   эффект анимации.
      */
-    public void insert(int index, PluginList plugins, float duration,
-                       Easing easing) {
+    public void insert(int index, PluginList plugins, float duration, Easing easing) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing);
         // Добавляем элемент в очередь.
@@ -527,8 +513,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public void insert(int index, PluginList plugins, float duration,
-                       Easing easing, AnimationListener listener) {
+    public void insert(int index, PluginList plugins, float duration, Easing easing, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Добавляем элемент в очередь.
@@ -543,8 +528,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public void insert(int index, PluginList plugins, float duration,
-                       AnimationListener listener) {
+    public void insert(int index, PluginList plugins, float duration, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, listener);
         // Добавляем элемент в очередь.
@@ -572,15 +556,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новый элемент очереди анимаций.
-        Element element = new Element(plugins, parameters);
+        Element element = new Element(plugins, animation);
         // Добавляем ее в конец списка.
         this.queue.add(index, element);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -607,8 +591,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param name     имя элемента.
      */
-    public void insert(String name, AnimationPlugin plugin, float duration,
-                       Easing easing) {
+    public void insert(String name, AnimationPlugin plugin, float duration, Easing easing) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -626,8 +609,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(String name, AnimationPlugin plugin, float duration,
-                       Easing easing, AnimationListener listener) {
+    public void insert(String name, AnimationPlugin plugin, float duration, Easing easing, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -644,8 +626,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(String name, AnimationPlugin plugin, float duration,
-                       AnimationListener listener) {
+    public void insert(String name, AnimationPlugin plugin, float duration, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -661,8 +642,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции.
      * @param name    имя элемента.
      */
-    public void insert(String name, AnimationPlugin plugin,
-                       AnimationOptions options) {
+    public void insert(String name, AnimationPlugin plugin, AnimationOptions options) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Добавляем элемент в очередь.
@@ -691,8 +671,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param name     имя элемента.
      */
-    public void insert(String name, PluginList plugins, float duration,
-                       Easing easing) {
+    public void insert(String name, PluginList plugins, float duration, Easing easing) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing);
         // Добавляем элемент в очередь.
@@ -708,8 +687,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(String name, PluginList plugins, float duration,
-                       Easing easing, AnimationListener listener) {
+    public void insert(String name, PluginList plugins, float duration, Easing easing, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Добавляем элемент в очередь.
@@ -724,8 +702,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(String name, PluginList plugins, float duration,
-                       AnimationListener listener) {
+    public void insert(String name, PluginList plugins, float duration, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, listener);
         // Добавляем элемент в очередь.
@@ -739,8 +716,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции.
      * @param name    имя элемента.
      */
-    public void insert(String name, PluginList plugins,
-                       AnimationOptions options) {
+    public void insert(String name, PluginList plugins, AnimationOptions options) {
         if (name == null) throw new NullPointerException("name == null");
         if (plugins == null) throw new NullPointerException("plugins == null");
         if (options == null) throw new NullPointerException("options == null");
@@ -753,15 +729,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новый элемент очереди анимаций.
-        Element element = new Element(name, plugins, parameters);
+        Element element = new Element(name, plugins, animation);
         // Добавляем ее в конец списка.
         this.queue.add(element);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -772,8 +748,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, AnimationPlugin plugin,
-                       float duration) {
+    public void insert(int index, String name, AnimationPlugin plugin, float duration) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -791,8 +766,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, AnimationPlugin plugin,
-                       float duration, Easing easing) {
+    public void insert(int index, String name, AnimationPlugin plugin, float duration, Easing easing) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -811,8 +785,8 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, AnimationPlugin plugin,
-                       float duration, Easing easing, AnimationListener listener) {
+    public void insert(int index, String name, AnimationPlugin plugin, float duration, Easing easing,
+                       AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -830,8 +804,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, AnimationPlugin plugin,
-                       float duration, AnimationListener listener) {
+    public void insert(int index, String name, AnimationPlugin plugin, float duration, AnimationListener listener) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
@@ -848,8 +821,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции.
      * @param name    имя элемента.
      */
-    public void insert(int index, String name, AnimationPlugin plugin,
-                       AnimationOptions options) {
+    public void insert(int index, String name, AnimationPlugin plugin, AnimationOptions options) {
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Добавляем элемент в очередь.
@@ -864,8 +836,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, PluginList plugins,
-                       float duration) {
+    public void insert(int index, String name, PluginList plugins, float duration) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration);
         // Добавляем элемент в очередь.
@@ -881,8 +852,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, PluginList plugins,
-                       float duration, Easing easing) {
+    public void insert(int index, String name, PluginList plugins, float duration, Easing easing) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing);
         // Добавляем элемент в очередь.
@@ -899,8 +869,8 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, PluginList plugins,
-                       float duration, Easing easing, AnimationListener listener) {
+    public void insert(int index, String name, PluginList plugins, float duration, Easing easing,
+                       AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Добавляем элемент в очередь.
@@ -916,8 +886,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, PluginList plugins,
-                       float duration, AnimationListener listener) {
+    public void insert(int index, String name, PluginList plugins, float duration, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, listener);
         // Добавляем элемент в очередь.
@@ -932,8 +901,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param options опции.
      * @param name    имя элемента.
      */
-    public void insert(int index, String name, PluginList plugins,
-                       AnimationOptions options) {
+    public void insert(int index, String name, PluginList plugins, AnimationOptions options) {
         if (index < 0) throw new IndexOutOfBoundsException("index < 0");
         if (index >= this.queue.size()) throw new IndexOutOfBoundsException("index >= queue.size");
         if (name == null) throw new NullPointerException("name == null");
@@ -948,15 +916,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новый элемент очереди анимаций.
-        Element element = new Element(name, plugins, parameters);
+        Element element = new Element(name, plugins, animation);
         // Добавляем ее в конец списка.
         this.queue.add(index, element);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -1000,15 +968,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новую очередь анимаций.
-        Element queue = new DelayElement(parameters);
+        Element queue = new DelayElement(animation);
         // Добавляем ее в конец списка.
         this.queue.add(queue);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -1057,15 +1025,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новую очередь анимаций.
-        Element queue = new DelayElement(parameters);
+        Element queue = new DelayElement(animation);
         // Добавляем ее в конец списка.
         this.queue.add(index, queue);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -1113,15 +1081,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новую очередь анимаций.
-        Element queue = new DelayElement(name, parameters);
+        Element queue = new DelayElement(name, animation);
         // Добавляем ее в конец списка.
         this.queue.add(queue);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -1146,8 +1114,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @param listener обработчик событий.
      * @param name     имя элемента.
      */
-    public void insert(int index, String name, float duration,
-                       AnimationListener listener) {
+    public void insert(int index, String name, float duration, AnimationListener listener) {
         // Создаем объект опций анимации.
         AnimationOptions options = new AnimationOptions(duration, listener);
         // Добавляем в очередь задержку.
@@ -1173,15 +1140,15 @@ public class QueueAnimation extends ControllableAnimation {
             return;
         }
 
-        // Создаем объект параметров анимации.
-        AnimationParameters parameters = new AnimationParameters(this.target, options);
+        // Создаем объект анимации.
+        ControllableAnimation animation = new ControllableAnimation().copy(this.target, options);
         // Создаем новую очередь анимаций.
-        Element queue = new DelayElement(name, parameters);
+        Element queue = new DelayElement(name, animation);
         // Добавляем ее в конец списка.
         this.queue.add(queue);
 
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTime(parameters.getTotalDuration(), parameters);
+        this.duration += this.getTime(animation.getTotalDuration(), animation);
     }
 
     /**
@@ -1275,24 +1242,22 @@ public class QueueAnimation extends ControllableAnimation {
         int currentIndex = this.queue.currentIndex;
         // Удаляем и получаем элемент.
         Element removed = this.queue.remove(index);
-        // Получаем параметры удаляемого элемента.
-        AnimationParameters rparameters = removed.parameters;
         // Запускаем событие останоки анимации.
-        rparameters.fireEvent(AnimationEvent.Type.STOP, this);
+        removed.animation.fireEvent(AnimationEvent.STOP, this);
         // Если нужно закончить анимацию элемента.
         if (gotoEnd) {
-            rparameters.end();
-            removed.plugins.update(rparameters);
+            removed.animation.end();
+            removed.plugins.update(removed.animation);
         }
         //
-        removed.plugins.end(rparameters);
+        removed.plugins.end(removed.animation);
 
-        float rduration = this.parameters.getTime(rparameters.getTotalDuration(), rparameters);
+        float duration = this.getTime(removed.animation.getTotalDuration(), removed.animation);
         // Обновляем пройденное время и продолжительность анимации очереди.
         if (currentIndex >= index) {
-            this.parameters.elapsedTime -= rduration;
+            this.elapsedTime -= duration;
         }
-        this.parameters.duration -= rduration;
+        this.duration -= duration;
 
         // Если удаляем активный элемент,
         if (currentIndex == index) {
@@ -1329,24 +1294,22 @@ public class QueueAnimation extends ControllableAnimation {
         int currentIndex = this.queue.currentIndex;
         // Удаляем и получаем элемент.
         Element removed = this.queue.remove(name);
-        // Получаем параметры удаляемого элемента.
-        AnimationParameters rparameters = removed.parameters;
         // Запускаем событие останоки анимации.
-        rparameters.fireEvent(AnimationEvent.Type.STOP, this);
+        removed.animation.fireEvent(AnimationEvent.STOP, this);
         // Если нужно закончить анимацию элемента.
         if (gotoEnd) {
-            rparameters.end();
-            removed.plugins.update(rparameters);
+            removed.animation.end();
+            removed.plugins.update(removed.animation);
         }
         //
-        removed.plugins.end(rparameters);
+        removed.plugins.end(removed.animation);
 
-        float rduration = this.parameters.getTime(rparameters.getTotalDuration(), rparameters);
+        float duration = this.getTime(removed.animation.getTotalDuration(), removed.animation);
         // Обновляем пройденное время и продолжительность анимации очереди.
         if (currentIndex >= index) {
-            this.parameters.elapsedTime -= rduration;
+            this.elapsedTime -= duration;
         }
-        this.parameters.duration -= rduration;
+        this.duration -= duration;
 
         // Если удаляем активный элемент,
         if (currentIndex == index) {
@@ -1373,10 +1336,8 @@ public class QueueAnimation extends ControllableAnimation {
 
         // Находим элемент.
         Element started = this.queue.get(index);
-        // Получаем параметры элемента.
-        AnimationParameters sparameters = started.parameters;
         //
-        sparameters.begin();
+        started.animation.reset();
 //        // Если его нет, то останавливаем анимацию.
 //        if(started == null) {
 //            // Устанавливаем состояние.
@@ -1389,17 +1350,16 @@ public class QueueAnimation extends ControllableAnimation {
         // Устанавливаем индекс активного элемента.
         this.queue.currentIndex = index;
         // Запускаем событие.
-        sparameters.fireEvent(AnimationEvent.Type.START, this);
+        //sparameters.fireEvent(AnimationEvent.START, this);
         //
-        started.plugins.begin(started.parameters);
+        started.plugins.begin(started.animation);
 
         // Обновляем пройденное время анимации очереди.
-        this.parameters.begin();
-        this.parameters.elapsedTime = 0.0f;
+        this.reset();
+        this.elapsedTime = 0.0f;
         for (int i = 0; i < index; i++) {
             Element element = this.queue.get(i);
-            AnimationParameters eparameters = element.parameters;
-            this.parameters.elapsedTime += this.parameters.getTime(eparameters.getTotalDuration(), eparameters);
+            this.elapsedTime += this.getTime(element.animation.getTotalDuration(), element.animation);
         }
     }
 
@@ -1420,8 +1380,6 @@ public class QueueAnimation extends ControllableAnimation {
 
         // Находим элемент.
         Element started = this.queue.get(name);
-        // Получаем параметры элемента.
-        AnimationParameters sparameters = started.parameters;
         // Получаем индекс элемента в очереди.
         int index = this.queue.indexOf(started);
 //        // Если его нет, то останавливаем анимацию.
@@ -1436,17 +1394,15 @@ public class QueueAnimation extends ControllableAnimation {
         // Устанавливаем индекс активного элемента.
         this.queue.currentIndex = index;
         // Запускаем событие.
-        sparameters.fireEvent(AnimationEvent.Type.START, this);
+        //started.animation.fireEvent(AnimationEvent.Type.START, this);
         //
-        started.plugins.begin(started.parameters);
+        started.plugins.begin(started.animation);
 
         // Обновляем пройденное время анимации очереди.
-        this.parameters.begin();
-        this.parameters.elapsedTime = 0.0f;
-        for (int i = 0; i < index; i++) {
-            Element element = this.queue.get(i);
-            AnimationParameters eparameters = element.parameters;
-            this.parameters.elapsedTime += this.parameters.getTime(eparameters.getTotalDuration(), eparameters);
+        this.reset();
+        this.elapsedTime = 0.0f;
+        for (Element element : this.queue) {
+            this.elapsedTime += this.getTime(element.animation.getTotalDuration(), element.animation);
         }
     }
 
@@ -1468,36 +1424,16 @@ public class QueueAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Получаем параметры элемента.
-        AnimationParameters сparameters = current.parameters;
         // Запускаем событие.
-        сparameters.fireEvent(AnimationEvent.Type.START, this);
+        //current.animation.fireEvent(AnimationEvent.Type.START, this);
         //
-        current.plugins.begin(current.parameters);
+        current.plugins.begin(current.animation);
 
-        this.parameters.elapsedTime = 0.0f;
+        this.elapsedTime = 0.0f;
         for (int i = 0; i < this.queue.currentIndex; i++) {
             Element element = this.queue.get(i);
-            AnimationParameters eparameters = element.parameters;
-            this.parameters.elapsedTime += this.parameters.getTime(eparameters.getTotalDuration(), eparameters);
+            this.elapsedTime += this.getTime(element.animation.getTotalDuration(), element.animation);
         }
-    }
-
-    @Override
-    public void repeat() {
-        // Если анимация не запущена, то выходим.
-        if (this.state != State.START) return;
-        // Если анимацию нужно удалить, то выходим.
-        if (this.state == State.REMOVE) return;
-
-        // Находим активный элемент.
-        Element current = this.queue.current();
-        // Получаем параметры элемента.
-        AnimationParameters parameters = current.parameters;
-        //
-        parameters.repeat();
-        // Запускаем событие.
-        parameters.fireEvent(AnimationEvent.Type.REPEAT, this);
     }
 
     @Override
@@ -1515,27 +1451,44 @@ public class QueueAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Получаем параметры элемента.
-        AnimationParameters cparameters = current.parameters;
         // Обновляем время в параметрах.
-        if (!cparameters.update(cparameters.getTimeFromTimeMode(elapsedTime))) return false;
-        // Запускаем событие кадра анимации.
-        cparameters.fireEvent(AnimationEvent.Type.STEP, this);
-        // Обновляем плагины.
-        current.plugins.update(cparameters);
+        if (!current.animation.updateTime(current.animation.getTimeFromTimeMode(elapsedTime))) return false;
 
-        // Обновляем пройденное время анимации очереди.
-        this.parameters.elapsedTime = this.parameters.getTime(cparameters.getTotalElapsedTime(), cparameters);
-        for (int i = 0; i < this.queue.currentIndex; i++) {
-            Element element = this.queue.get(i);
-            AnimationParameters eparameters = element.parameters;
-            this.parameters.elapsedTime += this.parameters.getTime(eparameters.getTotalDuration(), eparameters);
+        // Если анимация началась, то вызываем события
+        if (!current.animation.isBegin && current.animation.isBegin()) {
+            current.animation.isBegin = true;
+            if (current.animation.completedRepeat == 0) {
+                current.animation.fireEvent(AnimationEvent.BEGIN, this);
+            }
+            current.animation.fireEvent(AnimationEvent.START, this);
         }
 
+        // Запускаем событие кадра анимации.
+        current.animation.fireEvent(AnimationEvent.STEP, this);
+
+        //
+        this.update();
+
         // Если анимация закончилась.
-        if (cparameters.isEnded()) this.next();
+        if (current.animation.isEnd()) this.next();
         //
         return false;
+    }
+
+    @Override
+    protected void update() {
+        // Находим активный элемент.
+        Element current = this.queue.current();
+
+        // Обновляем плагины.
+        current.plugins.update(current.animation);
+
+        // Обновляем пройденное время анимации очереди.
+        this.elapsedTime = this.getTime(current.animation.getTotalElapsedTime(), current.animation);
+        for (int i = 0; i < this.queue.currentIndex; i++) {
+            Element element = this.queue.get(i);
+            this.elapsedTime += this.getTime(element.animation.getTotalDuration(), element.animation);
+        }
     }
 
     /**
@@ -1543,19 +1496,22 @@ public class QueueAnimation extends ControllableAnimation {
      * элемент очереди.
      */
     private void next() {
-        this.repeat();
+        // Если анимация не запущена, то выходим.
+        if (this.state != State.START) return;
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Получаем параметры элемента.
-        AnimationParameters cparameters = current.parameters;
+        // Запускаем событие.
+        current.animation.fireEvent(AnimationEvent.END, this);
+        //
+        current.animation.repeat();
 
         // Если нет возможности повторить анимацию.
-        if (!cparameters.canRepeat()) {
+        if (!current.animation.canRepeat()) {
             // Запускаем событие останоки анимации.
-            cparameters.fireEvent(AnimationEvent.Type.STOP, this);
+            current.animation.fireEvent(AnimationEvent.COMPLETE, this);
             //
-            current.plugins.end(cparameters);
+            current.plugins.end(current.animation);
 
             // Если включено анимирование по очереди.
             if (!this.one) {
@@ -1563,16 +1519,15 @@ public class QueueAnimation extends ControllableAnimation {
                 if (this.queue.canNext()) {
                     // Переходим на следующий элемент.
                     current = this.queue.next();
-                    cparameters = current.parameters;
                     //
-                    current.plugins.begin(cparameters);
+                    current.plugins.begin(current.animation);
                 } else {
                     //
-                    this.parameters.repeat();
+                    this.repeat();
                     // Если есть возможность повторить анимацию.
-                    if (this.parameters.canRepeat()) {
+                    if (this.canRepeat()) {
                         // Запускаем событие.
-                        this.parameters.fireEvent(AnimationEvent.Type.REPEAT, this);
+                        //this.fireEvent(AnimationEvent.REPEAT, this);
                         // Сбрасываем параметры очереди.
                         this.queue.reset();
                     } else {
@@ -1599,10 +1554,22 @@ public class QueueAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Получаем параметры элемента.
-        AnimationParameters cparameters = current.parameters;
         // Запускаем событие.
-        cparameters.fireEvent(AnimationEvent.Type.PAUSE, this);
+        current.animation.fireEvent(AnimationEvent.PAUSE, this);
+    }
+
+    @Override
+    public void resume() {
+        // Если анимация не была приостановлена, то выходим.
+        if (this.state != State.PAUSE) return;
+
+        // Устанавливаем состояние.
+        this.state = State.START;
+
+        // Находим активный элемент.
+        Element current = this.queue.current();
+        // Запускаем событие.
+        current.animation.fireEvent(AnimationEvent.RESUME, this);
     }
 
     @Override
@@ -1611,8 +1578,8 @@ public class QueueAnimation extends ControllableAnimation {
     }
 
     @Override
-    public void stop(boolean gotoEnd) {
-        this.stop(gotoEnd, false);
+    public boolean stop(boolean gotoEnd) {
+        return this.stop(gotoEnd, false);
     }
 
     /**
@@ -1622,21 +1589,21 @@ public class QueueAnimation extends ControllableAnimation {
      * @param gotoEnd флаг установли конечных значений всем свойствам первого
      *                элемента очереди.
      */
-    public void stop(boolean gotoEnd, boolean clear) {
+    public boolean stop(boolean gotoEnd, boolean clear) {
         // Если анимацию нужно удалить, то выходим.
-        if (this.state == State.REMOVE) return;
+        if (this.state == State.REMOVE) return false;
         // Если анимация уже остановлена.
         if (this.state == State.STOP) {
             // Если нужно очистить очередь.
             if (clear) {
                 // Сбрасываем параметры анимации.
-                this.parameters.begin();
-                this.parameters.duration = 0.0f;
+                this.reset();
+                this.duration = 0.0f;
                 // Очищаем очередь.
                 this.queue.clear();
             }
             // Выходим.
-            return;
+            return false;
         }
 
         // Устанавливаем состояние.
@@ -1644,43 +1611,43 @@ public class QueueAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Получаем параметры элемента.
-        AnimationParameters cparameters = current.parameters;
         // Запускаем событие останоки анимации.
-        cparameters.fireEvent(AnimationEvent.Type.STOP, this);
+        current.animation.fireEvent(AnimationEvent.STOP, this);
 
         // Если нужно завершить анимацию активного элемента очереди.
         if (gotoEnd) {
             //
-            cparameters.end();
+            current.animation.end();
             // Обновляем продолжительность анимации очереди.
-            this.parameters.elapsedTime += this.parameters.getTime(cparameters.getTotalElapsedTime(), cparameters);
+            this.elapsedTime += this.getTime(current.animation.getTotalElapsedTime(), current.animation);
             //
-            current.plugins.update(cparameters);
+            current.plugins.update(current.animation);
 
             // Если не нужно очищать очередь,
             if (!clear) {
                 // то переходим к следующему элементу очереди.
                 this.next();
                 // Сбрасываем параметры анимации.
-                this.parameters.begin();
-                this.parameters.duration = 0.0f;
+                this.reset();
+                this.duration = 0.0f;
                 // Выходим.
-                return;
+                return true;
             }
         }
 
         //
-        current.plugins.end(cparameters);
+        current.plugins.end(current.animation);
 
         // Если нужно очистить очередь.
         if (clear) {
             // Сбрасываем параметры анимации.
-            this.parameters.begin();
-            this.parameters.duration = 0.0f;
+            this.reset();
+            this.duration = 0.0f;
             // Очищаем очередь.
             this.queue.clear();
         }
+
+        return true;
     }
 
     @Override
@@ -1689,15 +1656,12 @@ public class QueueAnimation extends ControllableAnimation {
         // Сбрасываем параметры очереди.
         this.queue.reset();
         // Сбрасываем параметры анимации.
-        this.parameters.begin();
-        this.parameters.duration = 0.0f;
+        this.reset();
+        this.duration = 0.0f;
         // Проходим по элементам очереди.
-        int qSize = this.queue.size();
-        for (int i = 0; i < qSize; i++) {
-            // Получаем элемент очереди.
-            Element element = this.queue.get(i);
+        for (Element element : this.queue) {
             // Сбрасываем параметры элемента очереди.
-            element.parameters.begin();
+            element.animation.reset();
         }
     }
 
@@ -1720,22 +1684,21 @@ public class QueueAnimation extends ControllableAnimation {
     public void setPosition(float position) {
         super.setPosition(position);
 
-        float d1 = this.getDuration();
+        float d1 = this.getDurationInMilliseconds();
         float d2 = 0.0f;
         int qSize = this.queue.size();
         for (int i = 0; i < qSize; i++) {
             Element element = this.queue.get(i);
-            AnimationParameters eparameters = element.parameters;
 
-            float d3 = eparameters.getTimeInMillisecond(eparameters.getTotalDuration());
+            float d3 = element.animation.getTimeInMillisecond(element.animation.getTotalDuration());
             d2 += d3;
 
             if (d2 / d1 >= position) {
                 this.queue.currentIndex = i;
                 float d4 = d1 * position - d3;
-                float d5 = eparameters.getTimeInMillisecond(eparameters.duration);
-                eparameters.completedRepeat = (int) (d4 / d5);
-                eparameters.elapsedTime = eparameters.getTimeFromTimeMode(d4 % d5);
+                float d5 = element.animation.getTimeInMillisecond(element.animation.duration);
+                element.animation.completedRepeat = (int) (d4 / d5);
+                element.animation.elapsedTime = element.animation.getTimeFromTimeMode(d4 % d5);
                 break;
             }
         }
@@ -1750,8 +1713,8 @@ public class QueueAnimation extends ControllableAnimation {
         // Устанавливаем состояние.
         this.state = State.STOP;
         // Сбрасываем параметры анимации.
-        this.parameters.begin();
-        this.parameters.duration = 0.0f;
+        this.reset();
+        this.duration = 0.0f;
         // Очищаем очередь.
         this.queue.clear();
     }
@@ -1781,25 +1744,25 @@ public class QueueAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 0.1.4
      */
-    public static class Element {
+    static class Element {
 
         /**
          * Имя элемента.
          */
-        protected String name = null;
+        String name = null;
         /**
-         * Опции элемента.
+         * Анимация.
          */
-        protected AnimationParameters parameters = null;
+        ControllableAnimation animation = null;
         /**
          * Список анимируемых плагинов.
          */
-        protected PluginList plugins = null;
+        PluginList plugins = null;
 
         /**
          * Конструктор, создающий пустой элемент очереди анимации.
          */
-        protected Element() {
+        Element() {
         }
 
         /**
@@ -1807,13 +1770,13 @@ public class QueueAnimation extends ControllableAnimation {
          * параметрами.
          *
          * @param plugins    список плагинов.
-         * @param parameters опции.
+         * @param animation  анимация.
          */
-        public Element(PluginList plugins, AnimationParameters parameters) {
-            this.parameters = parameters;
+        Element(PluginList plugins, ControllableAnimation animation) {
+            this.animation = animation;
             this.plugins = plugins;
             // Инициализируем свойства.
-            this.plugins.initialize(this.parameters);
+            this.plugins.initialize(animation);
         }
 
         /**
@@ -1822,42 +1785,14 @@ public class QueueAnimation extends ControllableAnimation {
          *
          * @param name       имя.
          * @param plugins    список плагинов.
-         * @param parameters опции.
+         * @param animation  анимация.
          */
-        public Element(String name, PluginList plugins,
-                       AnimationParameters parameters) {
+        Element(String name, PluginList plugins, ControllableAnimation animation) {
             this.name = name;
-            this.parameters = parameters;
+            this.animation = animation;
             this.plugins = plugins;
             // Инициализируем свойства.
-            this.plugins.initialize(this.parameters);
-        }
-
-        /**
-         * Получает имя элемента.
-         *
-         * @return имя элемента.
-         */
-        public String getName() {
-            return this.name;
-        }
-
-        /**
-         * Получает параметры элемента.
-         *
-         * @return параметры элемента.
-         */
-        public AnimationParameters getParameters() {
-            return this.parameters;
-        }
-
-        /**
-         * Получает список плагинов элемента.
-         *
-         * @return список плагинов элемента.
-         */
-        public PluginList getPlugins() {
-            return this.plugins;
+            this.plugins.initialize(animation);
         }
 
     }
@@ -1868,12 +1803,12 @@ public class QueueAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 0.1.0
      */
-    public static class DelayElement extends Element {
+    static class DelayElement extends Element {
 
         /**
          * Конструктор, создающий пустой элемент очереди анимации.
          */
-        public DelayElement() {
+        DelayElement() {
             this.plugins = new PluginList();
         }
 
@@ -1881,10 +1816,10 @@ public class QueueAnimation extends ControllableAnimation {
          * Конструктор, создающий элемент очереди анимации с заданными
          * параметрами.
          *
-         * @param parameters опции.
+         * @param animation  анимация.
          */
-        public DelayElement(AnimationParameters parameters) {
-            this.parameters = parameters;
+        DelayElement(ControllableAnimation animation) {
+            this.animation = animation;
             this.plugins = new PluginList();
         }
 
@@ -1893,11 +1828,11 @@ public class QueueAnimation extends ControllableAnimation {
          * параметрами.
          *
          * @param name       имя элемента.
-         * @param parameters опции.
+         * @param animation  анимация.
          */
-        public DelayElement(String name, AnimationParameters parameters) {
+        DelayElement(String name, ControllableAnimation animation) {
             this.name = name;
-            this.parameters = parameters;
+            this.animation = animation;
             this.plugins = new PluginList();
         }
 
@@ -1909,12 +1844,12 @@ public class QueueAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 0.1.0
      */
-    public static class ListenerElement extends Element {
+    static class ListenerElement extends Element {
 
         /**
          * Конструктор, создающий пустой элемент очереди анимации.
          */
-        public ListenerElement() {
+        ListenerElement() {
             this.plugins = new PluginList();
         }
 
@@ -1924,11 +1859,11 @@ public class QueueAnimation extends ControllableAnimation {
          *
          * @param options опции.
          */
-        public ListenerElement(AnimationOptions options) {
+        ListenerElement(AnimationOptions options) {
             options.duration = 0.0f;
             options.fps = 0;
 
-            this.parameters = new AnimationParameters(null, options);
+            this.animation = new ControllableAnimation().copy(null, options);
             this.plugins = new PluginList();
         }
 
@@ -1939,12 +1874,12 @@ public class QueueAnimation extends ControllableAnimation {
          * @param name    имя элемента.
          * @param options опции.
          */
-        public ListenerElement(String name, AnimationOptions options) {
+        ListenerElement(String name, AnimationOptions options) {
             options.duration = 0.0f;
             options.fps = 0;
 
             this.name = name;
-            this.parameters = new AnimationParameters(null, options);
+            this.animation = new ControllableAnimation().copy(null, options);
             this.plugins = new PluginList();
         }
 
@@ -1956,7 +1891,7 @@ public class QueueAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 1.1.0
      */
-    protected static class Queue {
+    static class Queue implements Iterable<Element> {
 
         /**
          * Список элементов.
@@ -2158,14 +2093,16 @@ public class QueueAnimation extends ControllableAnimation {
         float getDuration() {
             float duration = 0.0f;
             int size = this.list.size();
-            for (int i = 0; i < size; i++) {
-                Element element = this.list.get(i);
-                AnimationParameters eparameters = element.parameters;
-                duration += eparameters.getTimeInMillisecond(eparameters.getTotalDuration());
+            for (Element element : this.list) {
+                duration += element.animation.getTimeInMillisecond(element.animation.getTotalDuration());
             }
             return duration;
         }
 
+        @Override
+        public Iterator<Element> iterator() {
+            return this.list.iterator();
+        }
     }
 
     /**
@@ -2282,7 +2219,8 @@ public class QueueAnimation extends ControllableAnimation {
          * @return данный построитель.
          */
         public QueueAnimationBuilder element(float duration) {
-            this.queue.add(new DelayElement(new AnimationParameters(this.target, new AnimationOptions(duration))));
+            this.queue.add(new DelayElement(new ControllableAnimation()
+                    .copy(this.target, new AnimationOptions(duration))));
             return this;
         }
 
@@ -2295,9 +2233,11 @@ public class QueueAnimation extends ControllableAnimation {
          */
         public QueueAnimationBuilder element(int index, float duration) {
             if (index < 0 || index > this.queue.size()) {
-                this.queue.add(new DelayElement(new AnimationParameters(this.target, new AnimationOptions(duration))));
+                this.queue.add(new DelayElement(new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration))));
             } else {
-                this.queue.add(index, new DelayElement(new AnimationParameters(this.target, new AnimationOptions(duration))));
+                this.queue.add(index, new DelayElement(new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration))));
             }
             return this;
         }
@@ -2310,7 +2250,8 @@ public class QueueAnimation extends ControllableAnimation {
          * @return данный построитель.
          */
         public QueueAnimationBuilder element(String name, float duration) {
-            this.queue.add(new DelayElement(name, new AnimationParameters(this.target, new AnimationOptions(duration))));
+            this.queue.add(new DelayElement(name, new ControllableAnimation()
+                    .copy(this.target, new AnimationOptions(duration))));
             return this;
         }
 
@@ -2324,9 +2265,11 @@ public class QueueAnimation extends ControllableAnimation {
          */
         public QueueAnimationBuilder element(int index, String name, float duration) {
             if (index < 0 || index > this.queue.size()) {
-                this.queue.add(new DelayElement(name, new AnimationParameters(this.target, new AnimationOptions(duration))));
+                this.queue.add(new DelayElement(name, new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration))));
             } else {
-                this.queue.add(index, new DelayElement(name, new AnimationParameters(this.target, new AnimationOptions(duration))));
+                this.queue.add(index, new DelayElement(name, new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration))));
             }
             return this;
         }
@@ -2339,7 +2282,8 @@ public class QueueAnimation extends ControllableAnimation {
          * @return данный построитель.
          */
         public QueueAnimationBuilder element(float duration, AnimationListener listener) {
-            this.queue.add(new DelayElement(new AnimationParameters(this.target, new AnimationOptions(duration, listener == null ? new AnimationAdapter() : listener))));
+            this.queue.add(new DelayElement(new ControllableAnimation()
+                    .copy(this.target, new AnimationOptions(duration, listener))));
             return this;
         }
 
@@ -2353,9 +2297,11 @@ public class QueueAnimation extends ControllableAnimation {
          */
         public QueueAnimationBuilder element(int index, float duration, AnimationListener listener) {
             if (index < 0 || index > this.queue.size()) {
-                this.queue.add(new DelayElement(new AnimationParameters(this.target, new AnimationOptions(duration, listener == null ? new AnimationAdapter() : listener))));
+                this.queue.add(new DelayElement(new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration, listener))));
             } else {
-                this.queue.add(index, new DelayElement(new AnimationParameters(this.target, new AnimationOptions(duration, listener == null ? new AnimationAdapter() : listener))));
+                this.queue.add(index, new DelayElement(new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration, listener))));
             }
             return this;
         }
@@ -2369,7 +2315,8 @@ public class QueueAnimation extends ControllableAnimation {
          * @return данный построитель.
          */
         public QueueAnimationBuilder element(String name, float duration, AnimationListener listener) {
-            this.queue.add(new DelayElement(name, new AnimationParameters(this.target, new AnimationOptions(duration, listener == null ? new AnimationAdapter() : listener))));
+            this.queue.add(new DelayElement(name, new ControllableAnimation()
+                    .copy(this.target, new AnimationOptions(duration, listener))));
             return this;
         }
 
@@ -2384,9 +2331,11 @@ public class QueueAnimation extends ControllableAnimation {
          */
         public QueueAnimationBuilder element(int index, String name, float duration, AnimationListener listener) {
             if (index < 0 || index > this.queue.size()) {
-                this.queue.add(new DelayElement(name, new AnimationParameters(this.target, new AnimationOptions(duration, listener == null ? new AnimationAdapter() : listener))));
+                this.queue.add(new DelayElement(name, new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration, listener))));
             } else {
-                this.queue.add(index, new DelayElement(name, new AnimationParameters(this.target, new AnimationOptions(duration, listener == null ? new AnimationAdapter() : listener))));
+                this.queue.add(index, new DelayElement(name, new ControllableAnimation()
+                        .copy(this.target, new AnimationOptions(duration, listener))));
             }
             return this;
         }
@@ -2398,7 +2347,7 @@ public class QueueAnimation extends ControllableAnimation {
          * @return данный построитель.
          */
         public QueueAnimationBuilder element(AnimationListener listener) {
-            this.queue.add(new ListenerElement(new AnimationOptions(listener == null ? new AnimationAdapter() : listener)));
+            this.queue.add(new ListenerElement(new AnimationOptions(listener)));
             return this;
         }
 
@@ -2411,9 +2360,9 @@ public class QueueAnimation extends ControllableAnimation {
          */
         public QueueAnimationBuilder element(int index, AnimationListener listener) {
             if (index < 0 || index > this.queue.size()) {
-                this.queue.add(new ListenerElement(new AnimationOptions(listener == null ? new AnimationAdapter() : listener)));
+                this.queue.add(new ListenerElement(new AnimationOptions(listener)));
             } else {
-                this.queue.add(index, new ListenerElement(new AnimationOptions(listener == null ? new AnimationAdapter() : listener)));
+                this.queue.add(index, new ListenerElement(new AnimationOptions(listener)));
             }
             return this;
         }
@@ -2426,7 +2375,7 @@ public class QueueAnimation extends ControllableAnimation {
          * @return данный построитель.
          */
         public QueueAnimationBuilder element(String name, AnimationListener listener) {
-            this.queue.add(new ListenerElement(name, new AnimationOptions(listener == null ? new AnimationAdapter() : listener)));
+            this.queue.add(new ListenerElement(name, new AnimationOptions(listener)));
             return this;
         }
 
@@ -2440,9 +2389,9 @@ public class QueueAnimation extends ControllableAnimation {
          */
         public QueueAnimationBuilder element(int index, String name, AnimationListener listener) {
             if (index < 0 || index > this.queue.size()) {
-                this.queue.add(new ListenerElement(name, new AnimationOptions(listener == null ? new AnimationAdapter() : listener)));
+                this.queue.add(new ListenerElement(name, new AnimationOptions(listener)));
             } else {
-                this.queue.add(index, new ListenerElement(name, new AnimationOptions(listener == null ? new AnimationAdapter() : listener)));
+                this.queue.add(index, new ListenerElement(name, new AnimationOptions(listener)));
             }
             return this;
         }
@@ -2568,7 +2517,7 @@ public class QueueAnimation extends ControllableAnimation {
         /**
          * Построитель очереди анимации.
          */
-        protected QueueAnimationBuilder animationBuiler = null;
+        protected QueueAnimationBuilder animationBuilder = null;
         /**
          * Имя элемента очереди.
          */
@@ -2589,10 +2538,10 @@ public class QueueAnimation extends ControllableAnimation {
         /**
          * Конструктор, создающий объект построителя элемента очереди анимации.
          *
-         * @param queueAnimationBuiler построитель очереди анимации.
+         * @param queueAnimationBuilder построитель очереди анимации.
          */
-        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuiler) {
-            this.animationBuiler = queueAnimationBuiler;
+        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuilder) {
+            this.animationBuilder = queueAnimationBuilder;
             this.plugins = new PluginList();
             this.options = new AnimationOptions();
         }
@@ -2600,11 +2549,11 @@ public class QueueAnimation extends ControllableAnimation {
         /**
          * Конструктор, создающий объект построителя элемента очереди анимации.
          *
-         * @param queueAnimationBuiler построитель очереди анимации.
-         * @param index
+         * @param queueAnimationBuilder построитель очереди анимации.
+         * @param index индекс.
          */
-        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuiler, int index) {
-            this.animationBuiler = queueAnimationBuiler;
+        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuilder, int index) {
+            this.animationBuilder = queueAnimationBuilder;
             this.index = index;
             this.plugins = new PluginList();
             this.options = new AnimationOptions();
@@ -2613,11 +2562,11 @@ public class QueueAnimation extends ControllableAnimation {
         /**
          * Конструктор, создающий объект построителя элемента очереди анимации.
          *
-         * @param queueAnimationBuiler построитель очереди анимации.
+         * @param queueAnimationBuilder построитель очереди анимации.
          * @param name                 имя элемента.
          */
-        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuiler, String name) {
-            this.animationBuiler = queueAnimationBuiler;
+        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuilder, String name) {
+            this.animationBuilder = queueAnimationBuilder;
             this.name = name;
             this.plugins = new PluginList();
             this.options = new AnimationOptions();
@@ -2626,12 +2575,12 @@ public class QueueAnimation extends ControllableAnimation {
         /**
          * Конструктор, создающий объект построителя элемента очереди анимации.
          *
-         * @param queueAnimationBuiler построитель очереди анимации.
+         * @param queueAnimationBuilder построитель очереди анимации.
          * @param name                 имя элемента.
-         * @param index
+         * @param index индекс.
          */
-        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuiler, int index, String name) {
-            this.animationBuiler = queueAnimationBuiler;
+        protected QueueElementBuilder(QueueAnimationBuilder queueAnimationBuilder, int index, String name) {
+            this.animationBuilder = queueAnimationBuilder;
             this.name = name;
             this.index = -1;
             this.plugins = new PluginList();
@@ -2848,24 +2797,24 @@ public class QueueAnimation extends ControllableAnimation {
          * @return построитель очереди анимации.
          */
         public QueueAnimationBuilder build() {
-            if (this.animationBuiler.target == null) {
-                if (this.index < 0 || this.index > this.animationBuiler.queue.size()) {
-                    this.animationBuiler.queue.add(new Element(this.name, this.plugins,
-                            new AnimationParameters(this.options)));
+            if (this.animationBuilder.target == null) {
+                if (this.index < 0 || this.index > this.animationBuilder.queue.size()) {
+                    this.animationBuilder.queue.add(new Element(this.name, this.plugins,
+                            new ControllableAnimation().copy(this.options)));
                 } else {
-                    this.animationBuiler.queue.add(this.index, new Element(this.name, this.plugins,
-                            new AnimationParameters(this.options)));
+                    this.animationBuilder.queue.add(this.index, new Element(this.name, this.plugins,
+                            new ControllableAnimation().copy(this.options)));
                 }
             } else {
-                if (this.index < 0 || this.index > this.animationBuiler.queue.size()) {
-                    this.animationBuiler.queue.add(new Element(this.name, this.plugins,
-                            new AnimationParameters(this.animationBuiler.target, this.options)));
+                if (this.index < 0 || this.index > this.animationBuilder.queue.size()) {
+                    this.animationBuilder.queue.add(new Element(this.name, this.plugins,
+                            new ControllableAnimation().copy(this.animationBuilder.target, this.options)));
                 } else {
-                    this.animationBuiler.queue.add(this.index, new Element(this.name, this.plugins,
-                            new AnimationParameters(this.animationBuiler.target, this.options)));
+                    this.animationBuilder.queue.add(this.index, new Element(this.name, this.plugins,
+                            new ControllableAnimation().copy(this.animationBuilder.target, this.options)));
                 }
             }
-            return this.animationBuiler;
+            return this.animationBuilder;
         }
 
     }

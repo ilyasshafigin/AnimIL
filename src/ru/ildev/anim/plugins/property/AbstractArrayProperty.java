@@ -3,7 +3,7 @@
  */
 package ru.ildev.anim.plugins.property;
 
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.easings.Easing;
 import ru.ildev.anim.plugins.AnimationPlugin;
 import ru.ildev.anim.plugins.property.evaluator.TypeEvaluator;
@@ -109,8 +109,8 @@ public class AbstractArrayProperty<T> extends AbstractProperty<T> implements Arr
     }
 
     @Override
-    public void initialize(AnimationParameters parameters) {
-        super.initialize(parameters);
+    public void initialize(ControllableAnimation animation) {
+        super.initialize(animation);
 
         try {
             @SuppressWarnings("unchecked")

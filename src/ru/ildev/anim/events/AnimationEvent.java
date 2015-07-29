@@ -3,11 +3,18 @@
  */
 package ru.ildev.anim.events;
 
-import ru.ildev.anim.core.Animation;
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 
 /**
  * Класс события анимации.
+ *
+ * <pre> {@code
+ * forward :      BEGIN                                   COMPLETE
+ * forward :      START    END      START    END      START    END
+ * |--------------[XXXXXXXXXX]------[XXXXXXXXXX]------[XXXXXXXXXX]
+ * backward:      END   START       END   START       END   START
+ * backward:      COMPLETE                                  BEGIN
+ * }</pre>
  *
  * @author Shafigin Ilyas (Шафигин Ильяс) <Ilyas74>
  * @version 0.1.0
@@ -15,65 +22,59 @@ import ru.ildev.anim.core.AnimationParameters;
 public class AnimationEvent {
 
     /**
-     * Перечисление типов событий.
+     * Начало анимации
      */
-    public enum Type {
-
-        /**
-         * Событие запуска анимации.
-         */
-        START,
-        /**
-         * Событие остановки анимации.
-         */
-        STOP,
-        /**
-         * Событие перезапуска анимации.
-         */
-        RESTART,
-        /**
-         * Событие паузы анимации.
-         */
-        PAUSE,
-        /**
-         * Событие повтора анимации.
-         */
-        REPEAT,
-        /**
-         * Событие шага анимации.
-         */
-        STEP
-
-    }
+    public static final int BEGIN = 1;
+    /**
+     * Начало повтора анимации
+     */
+    public static final int START = 1 << 1;
+    /**
+     * Конец повтора анимации
+     */
+    public static final int END = 1 << 2;
+    /**
+     * Завершение анимации
+     */
+    public static final int COMPLETE = 1 << 3;
+    /**
+     * Событие перезапуска анимации
+     */
+    public static final int RESTART = 1 << 4;
+    /**
+     * Событие приостановки анимации
+     */
+    public static final int PAUSE = 1 << 5;
+    /**
+     * Событие запуска анимации после приостановки
+     */
+    public static final int RESUME = 1 << 6;
+    /**
+     * Событие остановки анимации
+     */
+    public static final int STOP = 1 << 7;
+    /**
+     * Событие шага анимации
+     */
+    public static final int STEP = 1 << 8;
 
     /**
      * Анимация.
      */
-    protected /*Controllable*/ Animation animation;
-    /**
-     * Параметры анимации.
-     */
-    protected AnimationParameters parameters;
+    protected ControllableAnimation animation;
     /**
      * Тип события.
      */
-    protected Type type;
+    protected int type;
 
     /**
      * Конструктор.
      *
      * @param animation  анимация.
-     * @param parameters параметры анимации.
      * @param type       тип события.
      */
-    public AnimationEvent(Animation animation, AnimationParameters parameters,
-                          Type type) {
-        if (animation == null) throw new NullPointerException("animation == null");
-        if (parameters == null) throw new NullPointerException("parameters == null");
-        if (type == null) throw new NullPointerException("type == null");
-
+    public AnimationEvent(ControllableAnimation animation, int type) {
         this.animation = animation;
-        this.parameters = parameters;
         this.type = type;
     }
 
@@ -82,17 +83,8 @@ public class AnimationEvent {
      *
      * @return анимацию.
      */
-    public Animation getAnimation() {
+    public ControllableAnimation getAnimation() {
         return this.animation;
-    }
-
-    /**
-     * Получает параметры анимации.
-     *
-     * @return параметры анимации.
-     */
-    public AnimationParameters getParameters() {
-        return this.parameters;
     }
 
     /**
@@ -100,7 +92,7 @@ public class AnimationEvent {
      *
      * @return тип события.
      */
-    public Type getType() {
+    public int getType() {
         return this.type;
     }
 

@@ -3,7 +3,6 @@
  */
 package ru.ildev.anim.core;
 
-import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 import ru.ildev.utils.Builder;
 
@@ -37,8 +36,7 @@ public class SequenceAnimation extends ControllableAnimation {
      * @param options опции анимации.
      * @param queue
      */
-    protected SequenceAnimation(Queue queue, AnimationOptions options,
-                                boolean oneRun) {
+    protected SequenceAnimation(Queue queue, AnimationOptions options, boolean oneRun) {
         super();
 
         if (queue == null) throw new NullPointerException("queue == null");
@@ -46,8 +44,8 @@ public class SequenceAnimation extends ControllableAnimation {
 
         this.queue = queue;
         this.oneRun = oneRun;
-        this.parameters.copy(options);
-        this.parameters.duration = 0.0f;
+        this.copy(options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -70,8 +68,8 @@ public class SequenceAnimation extends ControllableAnimation {
         if (options == null) throw new NullPointerException("options == null");
 
         this.queue = new Queue();
-        this.parameters.copy(options);
-        this.parameters.duration = 0.0f;
+        this.copy(options);
+        this.duration = 0.0f;
     }
 
     /**
@@ -86,7 +84,7 @@ public class SequenceAnimation extends ControllableAnimation {
         if (options == null) throw new NullPointerException("options == null");
         this.queue = new Queue();
         this.oneRun = oneRun;
-        this.parameters.copy(options);
+        this.copy(options);
     }
 
     /**
@@ -124,10 +122,8 @@ public class SequenceAnimation extends ControllableAnimation {
     public void insert(ControllableAnimation animation) {
         if (animation == null) throw new NullPointerException("animation == null");
 
-        // Получаем параметры анимации.
-        AnimationParameters aparameters = animation.parameters;
         // Если анимация будет повторяться бесконечно.
-        if (aparameters.repeat == REPEAT_INFINITE) {
+        if (animation.repeat == REPEAT_INFINITE) {
             // Заносим сообщение в регистратор.
             Animator.LOGGER.warning("repeat == REPEAT_INFINITE");
             // Выходим.
@@ -137,7 +133,7 @@ public class SequenceAnimation extends ControllableAnimation {
         // Добавляем ее в конец списка.
         this.queue.add(new Element(animation));
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTimeFromTimeMode(animation.getTotalDuration());
+        this.duration += this.getTimeFromTimeMode(animation.getTotalDurationInMilliseconds());
     }
 
     /**
@@ -151,10 +147,8 @@ public class SequenceAnimation extends ControllableAnimation {
         if (index >= this.queue.size()) throw new IndexOutOfBoundsException("index >= queue.size");
         if (animation == null) throw new NullPointerException("animation == null");
 
-        // Получаем параметры анимации.
-        AnimationParameters aparameters = animation.parameters;
         // Если анимация будет повторяться бесконечно.
-        if (aparameters.repeat == REPEAT_INFINITE) {
+        if (animation.repeat == REPEAT_INFINITE) {
             // Заносим сообщение в регистратор.
             Animator.LOGGER.warning("repeat == REPEAT_INFINITE");
             // Выходим.
@@ -164,7 +158,7 @@ public class SequenceAnimation extends ControllableAnimation {
         // Добавляем ее в конец списка.
         this.queue.add(index, new Element(animation));
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTimeFromTimeMode(animation.getTotalDuration());
+        this.duration += this.getTimeFromTimeMode(animation.getTotalDurationInMilliseconds());
     }
 
     /**
@@ -177,10 +171,8 @@ public class SequenceAnimation extends ControllableAnimation {
         if (name == null) throw new NullPointerException("name == null");
         if (animation == null) throw new NullPointerException("animation == null");
 
-        // Получаем параметры анимации.
-        AnimationParameters aparameters = animation.parameters;
         // Если анимация будет повторяться бесконечно.
-        if (aparameters.repeat == REPEAT_INFINITE) {
+        if (animation.repeat == REPEAT_INFINITE) {
             // Заносим сообщение в регистратор.
             Animator.LOGGER.warning("repeat == REPEAT_INFINITE");
             // Выходим.
@@ -190,7 +182,7 @@ public class SequenceAnimation extends ControllableAnimation {
         // Добавляем ее в конец списка.
         this.queue.add(new Element(name, animation));
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTimeFromTimeMode(animation.getTotalDuration());
+        this.duration += this.getTimeFromTimeMode(animation.getTotalDurationInMilliseconds());
     }
 
     /**
@@ -204,10 +196,8 @@ public class SequenceAnimation extends ControllableAnimation {
         if (name == null) throw new NullPointerException("name == null");
         if (animation == null) throw new NullPointerException("animation == null");
 
-        // Получаем параметры анимации.
-        AnimationParameters aparameters = animation.parameters;
         // Если анимация будет повторяться бесконечно.
-        if (aparameters.repeat == REPEAT_INFINITE) {
+        if (animation.repeat == REPEAT_INFINITE) {
             // Заносим сообщение в регистратор.
             Animator.LOGGER.warning("repeat == REPEAT_INFINITE");
             // Выходим.
@@ -217,7 +207,7 @@ public class SequenceAnimation extends ControllableAnimation {
         // Добавляем ее в конец списка.
         this.queue.add(index, new Element(name, animation));
         // Обновляем продолжительность анимации очереди.
-        this.parameters.duration += this.parameters.getTimeFromTimeMode(animation.getTotalDuration());
+        this.duration += this.getTimeFromTimeMode(animation.getTotalDurationInMilliseconds());
     }
 
     /**
@@ -245,17 +235,15 @@ public class SequenceAnimation extends ControllableAnimation {
         int currentIndex = this.queue.currentIndex;
         // Удаляем и получаем элемент.
         Element removed = this.queue.remove(index);
-        // Получаем анимацию элемента.
-        ControllableAnimation ranimation = removed.animation;
         // Останавливаем анимацию.
-        ranimation.stop(gotoEnd);
+        removed.animation.stop(gotoEnd);
 
-        float rduration = ranimation.getTotalDuration();
+        float duration = removed.animation.getTotalDurationInMilliseconds();
         // Обновляем пройденное время и продолжительность анимации очереди.
         if (currentIndex >= index) {
-            this.parameters.elapsedTime -= this.parameters.getTimeFromTimeMode(rduration);
+            this.elapsedTime -= this.getTimeFromTimeMode(duration);
         }
-        this.parameters.duration -= this.parameters.getTimeFromTimeMode(rduration);
+        this.duration -= this.getTimeFromTimeMode(duration);
 
         // Если удаляем активный элемент,
         if (currentIndex == index) {
@@ -292,17 +280,15 @@ public class SequenceAnimation extends ControllableAnimation {
         int currentIndex = this.queue.currentIndex;
         // Удаляем и получаем элемент.
         Element removed = this.queue.remove(name);
-        // Получаем анимацию элемента.
-        ControllableAnimation ranimation = removed.animation;
         // Останавливаем анимацию.
         removed.animation.stop(gotoEnd);
 
-        float rduration = ranimation.getTotalDuration();
+        float duration = removed.animation.getTotalDurationInMilliseconds();
         // Обновляем пройденное время и продолжительность анимации очереди.
         if (currentIndex >= index) {
-            this.parameters.elapsedTime -= this.parameters.getTimeFromTimeMode(rduration);
+            this.elapsedTime -= this.getTimeFromTimeMode(duration);
         }
-        this.parameters.duration -= this.parameters.getTimeFromTimeMode(rduration);
+        this.duration -= this.getTimeFromTimeMode(duration);
 
 
         // Если удаляем активный элемент,
@@ -348,12 +334,11 @@ public class SequenceAnimation extends ControllableAnimation {
         started.animation.start();
 
         // Обновляем пройденное время анимации очереди.
-        this.parameters.begin();
-        this.parameters.elapsedTime = 0.0f;
+        this.reset();
+        this.elapsedTime = 0.0f;
         for (int i = 0; i < index; i++) {
             Element element = this.queue.get(i);
-            ControllableAnimation eanimation = element.animation;
-            this.parameters.elapsedTime += this.parameters.getTimeFromTimeMode(eanimation.getTotalDuration());
+            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
         }
     }
 
@@ -394,12 +379,11 @@ public class SequenceAnimation extends ControllableAnimation {
         started.animation.start();
 
         // Обновляем пройденное время анимации очереди.
-        this.parameters.begin();
-        this.parameters.elapsedTime = 0.0f;
+        this.reset();
+        this.elapsedTime = 0.0f;
         for (int i = 0; i < index; i++) {
             Element element = this.queue.get(i);
-            ControllableAnimation eanimation = element.animation;
-            this.parameters.elapsedTime += this.parameters.getTimeFromTimeMode(eanimation.getTotalDuration());
+            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
         }
     }
 
@@ -421,25 +405,14 @@ public class SequenceAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Находим активную анимацию.
-        ControllableAnimation canimation = current.animation;
         // Перезапускаем активную анимацию.
-        canimation.restart();
+        current.animation.restart();
 
-        this.parameters.elapsedTime = 0.0f;
+        this.elapsedTime = 0.0f;
         for (int i = 0; i < this.queue.currentIndex; i++) {
             Element element = this.queue.get(i);
-            ControllableAnimation eanimation = element.animation;
-            this.parameters.elapsedTime += this.parameters.getTimeFromTimeMode(eanimation.getTotalDuration());
+            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
         }
-    }
-
-    @Override
-    public void repeat() {
-        // Запускаем событие.
-        this.parameters.fireEvent(AnimationEvent.Type.REPEAT, this);
-        // Сбрасываем параметры очереди.
-        this.queue.reset();
     }
 
     @Override
@@ -457,23 +430,18 @@ public class SequenceAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Находим активную анимацию.
-        ControllableAnimation canimation = current.animation;
-        // Получаем параметры элемента.
-        AnimationParameters cparameters = canimation.parameters;
         // Запускаем шаг активной анимации.
-        canimation.step(cparameters.getTimeFromTimeMode(elapsedTime));
+        current.animation.step(current.animation.getTimeFromTimeMode(elapsedTime));
 
         // Обновляем пройденное время анимации очереди.
-        this.parameters.elapsedTime = this.parameters.getTimeFromTimeMode(canimation.getTotalElapsedTime());
+        this.elapsedTime = this.getTimeFromTimeMode(current.animation.getTotalElapsedTimeInMilliseconds());
         for (int i = 0; i < this.queue.currentIndex; i++) {
             Element element = this.queue.get(i);
-            ControllableAnimation eanimation = element.animation;
-            this.parameters.elapsedTime += this.parameters.getTimeFromTimeMode(eanimation.getTotalDuration());
+            this.elapsedTime += this.getTimeFromTimeMode(element.animation.getTotalDurationInMilliseconds());
         }
 
         // Если анимация закончилась.
-        if (canimation.isStop()) this.next();
+        if (current.animation.isStop()) this.next();
         //
         return false;
     }
@@ -496,10 +464,10 @@ public class SequenceAnimation extends ControllableAnimation {
                 current.animation.start();
             } else {
                 //
-                this.parameters.repeat();
+                this.repeat();
                 // Если есть возможность повторить анимацию.
-                if (this.parameters.canRepeat()) {
-                    this.repeat();
+                if (this.canRepeat()) {
+                    this.queue.reset();
                 } else {
                     // Устанавливаем состояние.
                     this.state = State.STOP;
@@ -535,8 +503,8 @@ public class SequenceAnimation extends ControllableAnimation {
     }
 
     @Override
-    public void stop(boolean gotoEnd) {
-        this.stop(gotoEnd, false);
+    public boolean stop(boolean gotoEnd) {
+        return this.stop(gotoEnd, false);
     }
 
     /**
@@ -546,21 +514,21 @@ public class SequenceAnimation extends ControllableAnimation {
      * @param gotoEnd флаг установли конечных значений всем свойствам первого
      *                элемента очереди.
      */
-    public void stop(boolean gotoEnd, boolean clear) {
+    public boolean stop(boolean gotoEnd, boolean clear) {
         // Если анимацию нужно удалить, то выходим.
-        if (this.state == State.REMOVE) return;
+        if (this.state == State.REMOVE) return false;
         // Если анимация уже остановлена.
         if (this.state == State.STOP) {
             // Если нужно очистить очередь.
             if (clear) {
                 // Сбрасываем параметры анимации.
-                this.parameters.begin();
-                this.parameters.duration = 0.0f;
+                this.reset();
+                this.duration = 0.0f;
                 // Очищаем очередь.
                 this.queue.clear();
             }
             // Выходим.
-            return;
+            return false;
         }
 
         // Устанавливает состояние.
@@ -568,39 +536,37 @@ public class SequenceAnimation extends ControllableAnimation {
 
         // Находим активный элемент.
         Element current = this.queue.current();
-        // Находим активную анимацию.
-        ControllableAnimation canimation = current.animation;
-        // Получаем параметры элемента.
-        AnimationParameters cparameters = canimation.parameters;
         // Останавливаем ее.
-        canimation.stop(gotoEnd);
+        current.animation.stop(gotoEnd);
 
         // Если нужно завершить анимацию активного элемента очереди.
         if (gotoEnd) {
             //
-            cparameters.end();
+            current.animation.end();
             // Обновляем продолжительность анимации очереди.
-            this.parameters.elapsedTime += this.parameters.getTimeFromTimeMode(canimation.getTotalElapsedTime());
+            this.elapsedTime += this.getTimeFromTimeMode(current.animation.getTotalElapsedTimeInMilliseconds());
             // Если не нужно очищать очередь,
             if (!clear) {
                 // то переходим к следующему элементу очереди.
                 this.next();
                 // Сбрасываем параметры анимации.
-                this.parameters.begin();
-                this.parameters.duration = 0.0f;
+                this.reset();
+                this.duration = 0.0f;
                 // Выходим.
-                return;
+                return true;
             }
         }
 
         // Если нужно очистить очередь.
         if (clear) {
             // Сбрасываем параметры анимации.
-            this.parameters.begin();
-            this.parameters.duration = 0.0f;
+            this.reset();
+            this.duration = 0.0f;
             // Очищаем очередь.
             this.queue.clear();
         }
+
+        return true;
     }
 
     @Override
@@ -609,17 +575,15 @@ public class SequenceAnimation extends ControllableAnimation {
         // Сбрасываем параметры очереди.
         this.queue.reset();
         // Сбрасываем параметры анимации.
-        this.parameters.begin();
-        this.parameters.duration = 0.0f;
+        this.reset();
+        this.duration = 0.0f;
         // Проходим по анимациям очереди.
         int qSize = this.queue.size();
         for (int i = 0; i < qSize; i++) {
             // Находим активный элемент.
             Element element = this.queue.get(i);
-            // Находим активную анимацию.
-            ControllableAnimation eanimation = element.animation;
             // Сбрасываем параметры анимации.
-            eanimation.parameters.begin();
+            element.animation.reset();
         }
     }
 
@@ -632,23 +596,21 @@ public class SequenceAnimation extends ControllableAnimation {
     public void setPosition(float position) {
         super.setPosition(position);
 
-        float d1 = this.getDuration();
+        float d1 = this.getDurationInMilliseconds();
         float d2 = 0.0f;
         int qSize = this.queue.size();
         for (int i = 0; i < qSize; i++) {
             Element element = this.queue.get(i);
-            ControllableAnimation eanimation = element.animation;
-            AnimationParameters eparameters = element.animation.parameters;
 
-            float d3 = eanimation.getTotalDuration();
+            float d3 = element.animation.getTotalDurationInMilliseconds();
             d2 += d3;
 
             if (d2 / d1 >= position) {
                 this.queue.currentIndex = i;
                 float d4 = d1 * position - d3;
-                float d5 = eanimation.getDuration();
-                eparameters.completedRepeat = (int) (d4 / d5);
-                eparameters.elapsedTime = eparameters.getTimeFromTimeMode(d4 % d5);
+                float d5 = element.animation.getDurationInMilliseconds();
+                element.animation.completedRepeat = (int) (d4 / d5);
+                element.animation.elapsedTime = element.animation.getTimeFromTimeMode(d4 % d5);
                 break;
             }
         }
@@ -661,8 +623,8 @@ public class SequenceAnimation extends ControllableAnimation {
         // Устанавливаем состояние.
         this.state = State.STOP;
         // Сбрасываем параметры анимации.
-        this.parameters.begin();
-        this.parameters.duration = 0.0f;
+        this.reset();
+        this.duration = 0.0f;
         // Очищаем очередь.
         this.queue.clear();
     }

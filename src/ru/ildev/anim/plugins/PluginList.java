@@ -3,7 +3,7 @@
  */
 package ru.ildev.anim.plugins;
 
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,44 +45,44 @@ public class PluginList extends ArrayList<AnimationPlugin> {
     /**
      * Инициализирует добавленные плагины.
      *
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    public void initialize(AnimationParameters parameters) {
+    public void initialize(ControllableAnimation animation) {
         int size = this.size();
         // Если список пуст, то выходим.
         if (size == 0) return;
         // Проходим по плагинам и инициализируем их
-        this.forEach(plugin -> plugin.initialize(parameters));
+        this.forEach(plugin -> plugin.initialize(animation));
     }
 
     /**
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    public void begin(AnimationParameters parameters) {
+    public void begin(ControllableAnimation animation) {
         int size = this.size();
         // Если список пуст, то выходим.
         if (size == 0) return;
         // Проходим по плагинам.
-        this.forEach(plugin -> plugin.begin(parameters));
+        this.forEach(plugin -> plugin.begin(animation));
     }
 
     /**
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    public void end(AnimationParameters parameters) {
+    public void end(ControllableAnimation animation) {
         int size = this.size();
         // Если список пуст, то выходим.
         if (size == 0) return;
         // Проходим по плагинам.
-        this.forEach(plugin -> plugin.end(parameters));
+        this.forEach(plugin -> plugin.end(animation));
     }
 
     /**
      * Обновляет добавленные плагины..
      *
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    public void update(AnimationParameters parameters) {
+    public void update(ControllableAnimation animation) {
         int size = this.size();
         // Если список пуст, то выходим.
         if (size == 0) return;
@@ -91,7 +91,7 @@ public class PluginList extends ArrayList<AnimationPlugin> {
             // Если плагин был инициализирован,
             if (plugin.hasState(AnimationPlugin.INITIALIZE)) {
                 // то обновляем его.
-                plugin.update(parameters);
+                plugin.update(animation);
             }
         });
     }

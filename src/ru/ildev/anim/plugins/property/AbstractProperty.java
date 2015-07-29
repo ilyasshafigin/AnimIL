@@ -4,7 +4,7 @@
 package ru.ildev.anim.plugins.property;
 
 import ru.ildev.anim.core.AnimationConstants;
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.easings.Easing;
 import ru.ildev.anim.plugins.property.evaluator.TypeEvaluator;
 
@@ -261,9 +261,9 @@ public abstract class AbstractProperty<T> implements Property<T> {
     }
 
     @Override
-    public void initialize(AnimationParameters parameters) {
+    public void initialize(ControllableAnimation animation) {
         // Устанавливаем анимируемый объект.
-        this.target = parameters.getTarget();
+        this.target = animation.getTarget();
         // Если нет анимируемого объекта.
         if (this.target == null) {
             // Устанавливаем состояние.
@@ -274,14 +274,14 @@ public abstract class AbstractProperty<T> implements Property<T> {
         // Если не установлен эффект анимации свойства,
         if (this.easing == null) {
             // то устанавливаем стандартный.
-            this.easing = parameters.getEasing();
+            this.easing = animation.getEasing();
         }
         // Устанавливаем состояние.
         this.setState(INITIALIZE, true);
     }
 
     @Override
-    public void begin(AnimationParameters parameters) {
+    public void begin(ControllableAnimation animation) {
         if (this.hasState(INITIALIZE) && !this.hasState(INITIALIZE)) {
             this.begin = this.get();
 
@@ -301,14 +301,14 @@ public abstract class AbstractProperty<T> implements Property<T> {
     }
 
     @Override
-    public void end(AnimationParameters parameters) {
+    public void end(ControllableAnimation animation) {
         //
     }
 
     @Override
-    public void update(AnimationParameters parameters) {
+    public void update(ControllableAnimation animation) {
         if (this.hasState(SETUP)) {
-            float position = parameters.getPosition(this.easing);
+            float position = animation.getPosition(this.easing);
             this.set(this.evaluator.evaluate(position, this.begin, this.end));
         }
     }

@@ -4,7 +4,6 @@
 package ru.ildev.anim.core;
 
 import ru.ildev.anim.easings.Easing;
-import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 import ru.ildev.anim.plugins.AnimationPlugin;
 import ru.ildev.anim.plugins.PluginList;
@@ -71,8 +70,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(AnimationPlugin plugin, float duration,
-                          Easing easing, AnimationListener listener) {
+    public BasicAnimation(AnimationPlugin plugin, float duration, Easing easing, AnimationListener listener) {
         super();
 
         // Создаем список плагинов с добавленным в него плагином.
@@ -92,8 +90,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(AnimationPlugin plugin, float duration,
-                          AnimationListener listener) {
+    public BasicAnimation(AnimationPlugin plugin, float duration, AnimationListener listener) {
         super();
 
         // Создаем список плагинов с добавленным в него плагином.
@@ -162,8 +159,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(PluginList plugins, float duration, Easing easing,
-                          AnimationListener listener) {
+    public BasicAnimation(PluginList plugins, float duration, Easing easing, AnimationListener listener) {
         super();
 
         // Создаем объект опций анимации.
@@ -181,8 +177,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(PluginList plugins, float duration,
-                          AnimationListener listener) {
+    public BasicAnimation(PluginList plugins, float duration, AnimationListener listener) {
         super();
 
         // Создаем объект опций анимации.
@@ -233,8 +228,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param easing   эффект анимации.
      */
-    public BasicAnimation(Object target, AnimationPlugin plugin,
-                          float duration, Easing easing) {
+    public BasicAnimation(Object target, AnimationPlugin plugin, float duration, Easing easing) {
         super();
 
         // Создаем список плагинов с добавленным в него плагином.
@@ -255,15 +249,13 @@ public class BasicAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(Object target, AnimationPlugin plugin,
-                          float duration, Easing easing, AnimationListener listener) {
+    public BasicAnimation(Object target, AnimationPlugin plugin, float duration, Easing easing, AnimationListener listener) {
         super();
 
         // Создаем список плагинов с добавленным в него плагином.
         PluginList plugins = new PluginList(plugin);
         // Создаем объект опций анимации.
-        AnimationOptions options = new AnimationOptions(duration, easing,
-                listener);
+        AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Запускаем инициализацию.
         this.initialize(target, plugins, options);
     }
@@ -277,8 +269,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(Object target, AnimationPlugin plugin,
-                          float duration, AnimationListener listener) {
+    public BasicAnimation(Object target, AnimationPlugin plugin, float duration, AnimationListener listener) {
         super();
 
         // Создаем список плагинов с добавленным в него плагином.
@@ -297,8 +288,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param plugin  плагин.
      * @param options опции.
      */
-    public BasicAnimation(Object target, AnimationPlugin plugin,
-                          AnimationOptions options) {
+    public BasicAnimation(Object target, AnimationPlugin plugin, AnimationOptions options) {
         super();
 
         // Создаем список плагинов с добавленным в него плагином.
@@ -333,8 +323,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param easing   эффект анимации.
      */
-    public BasicAnimation(Object target, PluginList plugins, float duration,
-                          Easing easing) {
+    public BasicAnimation(Object target, PluginList plugins, float duration, Easing easing) {
         super();
 
         // Создаем объект опций анимации.
@@ -353,13 +342,11 @@ public class BasicAnimation extends ControllableAnimation {
      * @param easing   эффект анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(Object target, PluginList plugins, float duration,
-                          Easing easing, AnimationListener listener) {
+    public BasicAnimation(Object target, PluginList plugins, float duration, Easing easing, AnimationListener listener) {
         super();
 
         // Создаем объект опций анимации.
-        AnimationOptions options = new AnimationOptions(duration, easing,
-                listener);
+        AnimationOptions options = new AnimationOptions(duration, easing, listener);
         // Запускаем инициализацию.
         this.initialize(target, plugins, options);
     }
@@ -373,8 +360,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param duration продолжительность анимации.
      * @param listener обработчик событий.
      */
-    public BasicAnimation(Object target, PluginList plugins, float duration,
-                          AnimationListener listener) {
+    public BasicAnimation(Object target, PluginList plugins, float duration, AnimationListener listener) {
         super();
 
         // Создаем объект опций анимации.
@@ -391,8 +377,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @param plugins список плагинов.
      * @param options опции.
      */
-    public BasicAnimation(Object target, PluginList plugins,
-                          AnimationOptions options) {
+    public BasicAnimation(Object target, PluginList plugins, AnimationOptions options) {
         super();
 
         // Запускаем инициализацию.
@@ -420,8 +405,8 @@ public class BasicAnimation extends ControllableAnimation {
 
         // Устанавливаем значения.
         this.plugins = plugins;
-        this.parameters.copy(null, options);
-        this.plugins.initialize(this.parameters);
+        this.copy(null, options);
+        this.plugins.initialize(this);
     }
 
     /**
@@ -438,66 +423,33 @@ public class BasicAnimation extends ControllableAnimation {
 
         // Устанавливаем значения.
         this.plugins = plugins;
-        this.parameters.copy(target, options);
-        this.plugins.initialize(this.parameters);
+        this.copy(target, options);
+        this.plugins.initialize(this);
     }
 
     @Override
     public void start() {
         super.start();
         //
-        this.plugins.begin(this.parameters);
+        this.plugins.begin(this);
     }
 
     @Override
-    public boolean step(float elapsedTime) {
-        // Если анимацию нужно удалить.
-        if (this.state == State.REMOVE) return true;
-        // Если анимация остановлена.
-        if (this.state == State.STOP) return true;
-        // Если на паузе.
-        if (this.state == State.PAUSE) return false;
-
-        // Если пройденное время некорректно, то выходим.
-        //if(elapsedTime <= 0.0f) return false;
-        // Если плагинов нет.
-        //if(this.plugins.isEmpty()) return true;
-        // Обновляем время в опциях.
-        if (!this.parameters.update(this.parameters.getTimeFromTimeMode(elapsedTime))) return false;
-
-        // Запускаем событие кадра анимации.
-        this.parameters.fireEvent(AnimationEvent.Type.STEP, this);
-
+    public void update() {
         // Обновляем плагины.
-        this.plugins.update(this.parameters);
-
-        // Если анимация закончилась.
-        if (this.parameters.isEnded()) this.next();
-        //
-        return false;
+        this.plugins.update(this);
     }
 
     @Override
-    public void stop(boolean gotoEnd) {
-        super.stop(gotoEnd);
+    public boolean stop(boolean gotoEnd) {
+        if (!super.stop(gotoEnd)) return false;
 
         if (gotoEnd) {
-            this.plugins.update(this.parameters);
+            this.plugins.update(this);
         }
-        this.plugins.end(this.parameters);
-    }
+        this.plugins.end(this);
 
-    /**
-     * Метод перехода на следующий цикл повторений анимации.
-     */
-    private void next() {
-        this.repeat();
-
-        // Есои нет возможности продолжать анимацию.
-        if (!this.parameters.canRepeat()) {
-            // Останавливаем анимацию.
-            this.stop();
-        }
+        return true;
     }
 
     /**
@@ -525,8 +477,7 @@ public class BasicAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 0.2.4
      */
-    public static class BasicAnimationBuilder implements
-            Builder<BasicAnimation> {
+    public static class BasicAnimationBuilder implements Builder<BasicAnimation> {
 
         /**
          * Анимируемый объект.
@@ -687,6 +638,16 @@ public class BasicAnimation extends ControllableAnimation {
         }
 
         /**
+         * Устанавливает триггеры событий.
+         * @param triggers триггеры
+         * @return данный построитель.
+         */
+        public BasicAnimationBuilder triggers(int triggers) {
+            this.options.setTriggers(triggers);
+            return this;
+        }
+
+        /**
          * Устанавливает количество повторов анимации.
          *
          * @param repeat количество повторов анимации.
@@ -763,13 +724,11 @@ public class BasicAnimation extends ControllableAnimation {
         @Override
         public BasicAnimation build() {
             if (this.target == null) {
-                BasicAnimation animation = new BasicAnimation(this.plugins,
-                        this.options);
+                BasicAnimation animation = new BasicAnimation(this.plugins, this.options);
                 this.reset();
                 return animation;
             } else {
-                BasicAnimation animation = new BasicAnimation(this.target,
-                        this.plugins, this.options);
+                BasicAnimation animation = new BasicAnimation(this.target, this.plugins, this.options);
                 this.reset();
                 return animation;
             }

@@ -3,7 +3,7 @@
  */
 package ru.ildev.anim.plugins;
 
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 
 import java.util.logging.Logger;
 
@@ -28,30 +28,30 @@ public interface AnimationPlugin {
     /**
      * Инициализирует плагин.
      *
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    void initialize(AnimationParameters parameters);
+    void initialize(ControllableAnimation animation);
 
     /**
      * Запускается после начала анимации.
      *
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    void begin(AnimationParameters parameters);
+    void begin(ControllableAnimation animation);
 
     /**
      * Запускается после окончания анимации.
      *
-     * @param parameters параметры анимации.
+     * @param parameters анимация.
      */
-    void end(AnimationParameters parameters);
+    void end(ControllableAnimation parameters);
 
     /**
      * Обновляет плагин.
      *
-     * @param parameters параметры анимации.
+     * @param animation анимация.
      */
-    void update(AnimationParameters parameters);
+    void update(ControllableAnimation animation);
 
     /**
      * Проверяет состояние.

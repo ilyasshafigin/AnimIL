@@ -4,7 +4,6 @@
 package ru.ildev.anim.core;
 
 import ru.ildev.anim.easings.Easing;
-import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 import ru.ildev.math.MoreMath;
 import ru.ildev.utils.Builder;
@@ -24,20 +23,20 @@ public class TimelineAnimation extends ControllableAnimation {
     /**
      * Класс элемента временной шкалы.
      */
-    public static class Time {
+    static class Time {
 
         /**
          * Имя.
          */
-        protected String name;
+        String name;
         /**
          * Время начала анимации
          */
-        protected float startTime;
+        float startTime;
         /**
          * Объект анимации.
          */
-        protected ControllableAnimation animation;
+        ControllableAnimation animation;
 
         /**
          * Конструктор.
@@ -46,7 +45,7 @@ public class TimelineAnimation extends ControllableAnimation {
          * @param startTime время начала.
          * @param animation объект анимации.
          */
-        public Time(String name, float startTime, ControllableAnimation animation) {
+        Time(String name, float startTime, ControllableAnimation animation) {
             this.name = name;
             this.startTime = startTime;
             this.animation = animation;
@@ -72,7 +71,7 @@ public class TimelineAnimation extends ControllableAnimation {
         if (options == null) throw new NullPointerException("options == null");
 
         this.timeline = timeline;
-        this.parameters.copy(options);
+        this.copy(options);
     }
 
     /**
@@ -93,12 +92,13 @@ public class TimelineAnimation extends ControllableAnimation {
         super();
 
         this.timeline = new ArrayList<>();
-        this.parameters.copy(options);
+        this.copy(options);
     }
 
     /**
-     * @param startTime
-     * @param animation
+     * Добавляет на временную шкалу анимацию.
+     * @param startTime время начала анимации.
+     * @param animation анимация.
      */
     public void append(float startTime, ControllableAnimation animation) {
         if (animation == null) throw new NullPointerException("animation == null");
@@ -109,9 +109,10 @@ public class TimelineAnimation extends ControllableAnimation {
     }
 
     /**
-     * @param name
-     * @param startTime
-     * @param animation
+     * Добавляет на временную шкалу анимацию.
+     * @param name название анимации.
+     * @param startTime время начала анимации.
+     * @param animation анимация.
      */
     public void append(String name, float startTime, ControllableAnimation animation) {
         if (name == null) throw new NullPointerException("name == null");
@@ -129,11 +130,10 @@ public class TimelineAnimation extends ControllableAnimation {
     public void setTime(float currentTime) {
         if (currentTime < 0.0f) throw new IllegalArgumentException("currentTime < 0");
 
-        this.parameters.setTotalElapsedTime(currentTime);
+        this.setTotalElapsedTime(currentTime);
         for (Time time : this.timeline) {
-            ControllableAnimation tanimation = time.animation;
-            AnimationParameters tparameters = tanimation.parameters;
-            tparameters.setTotalElapsedTime(tparameters.getTime(MoreMath.max(0.0f, currentTime - time.startTime), this.parameters));
+            time.animation.setTotalElapsedTime(
+                    time.animation.getTime(MoreMath.max(0.0f, currentTime - time.startTime), this));
         }
     }
 
@@ -153,81 +153,39 @@ public class TimelineAnimation extends ControllableAnimation {
     }
 
     @Override
-    public void repeat() {
-        //
-        this.parameters.repeat();
-        // Запускаем событие.
-        this.parameters.fireEvent(AnimationEvent.Type.REPEAT, this);
+    protected void repeat() {
+        super.repeat();
 
         for (Time time : this.timeline) {
-            time.animation.parameters.begin();
+            time.animation.reset();
         }
     }
 
     @Override
-    public boolean step(float elapsedTime) {
-        // Если необходимо удалить данную анимацию.
-        if (this.state == State.REMOVE) return true;
-        // Если анимация остановлена.
-        if (this.state == State.STOP) return false;
-        // Если на паузе.
-        if (this.state == State.PAUSE) return false;
-
-        // Если пройденное время некорректно, то выходим.
-        //if(elapsedTime == 0.0f) return false;
-        // Обновляем время в опциях.
-        if (!this.parameters.update(this.parameters.getTimeFromTimeMode(elapsedTime))) return false;
-        // Запускаем событие кадра анимации.
-        this.parameters.fireEvent(AnimationEvent.Type.STEP, this);
-
+    public void update() {
         for (Time time : this.timeline) {
-            ControllableAnimation tanimation = time.animation;
-            AnimationParameters tparameters = tanimation.parameters;
-            float t = tparameters.getTime(this.parameters.elapsedTime - time.startTime, this.parameters);
+            float t = time.animation.getTime(this.elapsedTime - time.startTime, this);
 
-            if (tparameters.isInsidePlayingTime(t)) {
-                if (tanimation.isStop()) {
-                    tanimation.start();
+            if (time.animation.isInsidePlayingTime(t)) {
+                if (time.animation.isStop()) {
+                    time.animation.start();
                 }
 
-                tparameters.setTotalElapsedTime(t);
-                tanimation.step(0.0f);
+                time.animation.setTotalElapsedTime(t);
+                time.animation.step(0.0f);
             }
         }
-
-        // Если анимация закончилась.
-        if (this.parameters.isEnded()) this.next();
-        //
-        return false;
-    }
-
-    /**
-     * Метод перехода на следующий цикл повторений анимации.
-     */
-    private void next() {
-        this.repeat();
-
-        // Если нет возможности продолжать анимацию.
-        if (!this.parameters.canRepeat()) {
-            // Останавливаем анимацию.
-            this.stop();
-        }
     }
 
     @Override
-    public void stop() {
-        this.stop(false);
-    }
-
-    @Override
-    public void stop(boolean gotoEnd) {
-        // Если анимацию нужно удалить, то выходим.
-        if (this.state == State.REMOVE) return;
-
-        super.stop(gotoEnd);
-
-        for (Time time : this.timeline) {
-            time.animation.stop(gotoEnd);
+    public boolean stop(boolean gotoEnd) {
+        if (super.stop(gotoEnd)) {
+            for (Time time : this.timeline) {
+                time.animation.stop(gotoEnd);
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -236,16 +194,14 @@ public class TimelineAnimation extends ControllableAnimation {
         super.setPosition(position);
 
         for (Time time : this.timeline) {
-            ControllableAnimation tanimation = time.animation;
-            AnimationParameters tparameters = tanimation.parameters;
-            float t = tparameters.getTime(this.parameters.elapsedTime - time.startTime, this.parameters);
+            float t = time.animation.getTime(this.elapsedTime - time.startTime, this);
 
-            if (tparameters.isInsidePlayingTime(t)) {
-                if (tanimation.isStop()) {
-                    tanimation.start();
+            if (time.animation.isInsidePlayingTime(t)) {
+                if (time.animation.isStop()) {
+                    time.animation.start();
                 }
 
-                tparameters.setTotalElapsedTime(t);
+                time.animation.setTotalElapsedTime(t);
             }
         }
     }
@@ -259,7 +215,7 @@ public class TimelineAnimation extends ControllableAnimation {
         float duration = 0.0f;
         for (Time time : this.timeline) {
             ControllableAnimation tanimation = time.animation;
-            float tduration = tanimation.getTotalDuration();
+            float tduration = tanimation.getTotalDurationInMilliseconds();
 
             if (tduration == AnimationConstants.DURATION_INFINITE) {
                 return AnimationConstants.DURATION_INFINITE;
@@ -274,7 +230,7 @@ public class TimelineAnimation extends ControllableAnimation {
      * Пересчитывает продолжительность всей анимации.
      */
     public void recalculateTimelineDuration() {
-        this.parameters.duration = this.getTimelineDuration();
+        this.duration = this.getTimelineDuration();
     }
 
     /**

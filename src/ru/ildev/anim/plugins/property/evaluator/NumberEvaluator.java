@@ -106,14 +106,14 @@ public interface NumberEvaluator<T extends Number> extends TypeEvaluator<T> {
         @Override
         public java.lang.Integer calculate(String operation,
                                            java.lang.Integer from, java.lang.Integer to) {
-            int fromA = 0xff & from >> 24;
-            int fromR = 0xff & from >> 16;
-            int fromG = 0xff & from >> 8;
+            int fromA = 0xff & (from >> 24);
+            int fromR = 0xff & (from >> 16);
+            int fromG = 0xff & (from >> 8);
             int fromB = 0xff & from;
 
-            int toA = 0xff & to >> 24;
-            int toR = 0xff & to >> 16;
-            int toG = 0xff & to >> 8;
+            int toA = 0xff & (to >> 24);
+            int toR = 0xff & (to >> 16);
+            int toG = 0xff & (to >> 8);
             int toB = 0xff & to;
             switch (operation) {
                 case ADD: {
@@ -155,8 +155,7 @@ public interface NumberEvaluator<T extends Number> extends TypeEvaluator<T> {
                 default:
                     break;
             }
-            return (0xff & toA) << 24 | (0xff & toR) << 16 | (0xff & toG) << 8
-                    | 0xff & toB;
+            return (0xff & toA) << 24 | (0xff & toR) << 16 | (0xff & toG) << 8 | 0xff & toB;
         }
 
     }

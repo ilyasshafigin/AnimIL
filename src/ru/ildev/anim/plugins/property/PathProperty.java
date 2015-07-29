@@ -3,7 +3,7 @@
  */
 package ru.ildev.anim.plugins.property;
 
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.plugins.property.evaluator.TypeEvaluator;
 import ru.ildev.anim.plugins.property.evaluator.VectorEvaluator;
 import ru.ildev.game.g.curve.Curve;
@@ -99,26 +99,26 @@ public interface PathProperty<T> extends Property<T> {
         }
 
         @Override
-        public void initialize(AnimationParameters parameters) {
-            super.initialize(parameters);
-            this.property.initialize(parameters);
+        public void initialize(ControllableAnimation animation) {
+            super.initialize(animation);
+            this.property.initialize(animation);
             this.setState(SETUP, true);
         }
 
         @Override
-        public void begin(AnimationParameters parameters) {
-            this.property.begin(parameters);
+        public void begin(ControllableAnimation animation) {
+            this.property.begin(animation);
         }
 
         @Override
-        public void end(AnimationParameters parameters) {
-            this.property.end(parameters);
+        public void end(ControllableAnimation animation) {
+            this.property.end(animation);
         }
 
         @Override
-        public void update(AnimationParameters parameters) {
+        public void update(ControllableAnimation animation) {
             if (!this.property.hasState(SETUP)) return;
-            float position = MoreMath.clamp(parameters.getPosition(this.easing), 0.0f, 1.0f);
+            float position = MoreMath.clamp(animation.getPosition(this.easing), 0.0f, 1.0f);
             this.property.set(this.curve.getPointAt(position));
         }
 
@@ -190,26 +190,26 @@ public interface PathProperty<T> extends Property<T> {
         }
 
         @Override
-        public void initialize(AnimationParameters parameters) {
-            super.initialize(parameters);
-            this.property.initialize(parameters);
+        public void initialize(ControllableAnimation animation) {
+            super.initialize(animation);
+            this.property.initialize(animation);
             this.setState(SETUP, true);
         }
 
         @Override
-        public void begin(AnimationParameters parameters) {
-            this.property.begin(parameters);
+        public void begin(ControllableAnimation animation) {
+            this.property.begin(animation);
         }
 
         @Override
-        public void end(AnimationParameters parameters) {
-            this.property.end(parameters);
+        public void end(ControllableAnimation animation) {
+            this.property.end(animation);
         }
 
         @Override
-        public void update(AnimationParameters parameters) {
+        public void update(ControllableAnimation animation) {
             if (!this.property.hasState(SETUP)) return;
-            float position = MoreMath.clamp(parameters.getPosition(this.easing), 0.0f, 1.0f);
+            float position = MoreMath.clamp(animation.getPosition(this.easing), 0.0f, 1.0f);
             this.property.set(this.curve.getPointAt(position));
         }
 
@@ -281,26 +281,26 @@ public interface PathProperty<T> extends Property<T> {
         }
 
         @Override
-        public void initialize(AnimationParameters parameters) {
-            super.initialize(parameters);
-            this.property.initialize(parameters);
+        public void initialize(ControllableAnimation animation) {
+            super.initialize(animation);
+            this.property.initialize(animation);
             this.setState(SETUP, true);
         }
 
         @Override
-        public void begin(AnimationParameters parameters) {
-            this.property.begin(parameters);
+        public void begin(ControllableAnimation animation) {
+            this.property.begin(animation);
         }
 
         @Override
-        public void end(AnimationParameters parameters) {
-            this.property.end(parameters);
+        public void end(ControllableAnimation animation) {
+            this.property.end(animation);
         }
 
         @Override
-        public void update(AnimationParameters parameters) {
+        public void update(ControllableAnimation animation) {
             if (!this.property.hasState(SETUP)) return;
-            float position = MoreMath.clamp(parameters.getPosition(this.easing), 0.0f, 1.0f);
+            float position = MoreMath.clamp(animation.getPosition(this.easing), 0.0f, 1.0f);
             this.property.set(this.curve.getPointAt(position));
         }
 

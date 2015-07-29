@@ -3,7 +3,7 @@
  */
 package ru.ildev.anim.plugins.property;
 
-import ru.ildev.anim.core.AnimationParameters;
+import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.easings.Easing;
 import ru.ildev.math.MoreMath;
 
@@ -32,7 +32,7 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
     /**
      * Конструктор, устанавливающий имя свойству.
      *
-     * @param property
+     * @param property свойство.
      */
     public AbstractKeyFrameProperty(Property<T> property) {
         if (property == null) throw new NullPointerException("property == null");
@@ -46,7 +46,7 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
      * Конструктор, устанавливающий имя свойства и конечное значение.
      *
      * @param keys     ключевые кадры.
-     * @param property
+     * @param property свойство.
      */
     public AbstractKeyFrameProperty(KeyFrame<T>[] keys, Property<T> property) {
         this(property);
@@ -66,30 +66,30 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
     }
 
     @Override
-    public void initialize(AnimationParameters parameters) {
-        super.initialize(parameters);
-        this.property.initialize(parameters);
+    public void initialize(ControllableAnimation animation) {
+        super.initialize(animation);
+        this.property.initialize(animation);
         this.setState(SETUP, true);
     }
 
     @Override
-    public void begin(AnimationParameters parameters) {
-        this.property.begin(parameters);
-        super.begin(parameters);
+    public void begin(ControllableAnimation animation) {
+        this.property.begin(animation);
+        super.begin(animation);
     }
 
     @Override
-    public void end(AnimationParameters parameters) {
-        this.property.end(parameters);
-        super.end(parameters);
+    public void end(ControllableAnimation animation) {
+        this.property.end(animation);
+        super.end(animation);
     }
 
     @Override
-    public void update(AnimationParameters parameters) {
+    public void update(ControllableAnimation animation) {
         if (!this.property.hasState(SETUP)) return;
 
-        float duration = parameters.getDuration();
-        float time = parameters.getElapsedTime();
+        float duration = animation.getDuration();
+        float time = animation.getElapsedTime();
 
         int index = 0;
         for (int i = 0; i < this.keys.length; i++)

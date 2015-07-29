@@ -6,7 +6,6 @@ package ru.ildev.anim.skeletal;
 import ru.ildev.anim.core.AnimationOptions;
 import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.easings.Easing;
-import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.math.MoreMath;
 
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ public class SkeletonAnimation extends ControllableAnimation {
 
         this.name = name;
         this.keyFrames = new ArrayList<>();
-        this.parameters.copy(null, options);
+        this.copy(null, options);
     }
 
     /**
@@ -98,7 +97,7 @@ public class SkeletonAnimation extends ControllableAnimation {
 
         this.name = name;
         this.keyFrames = keyFrames;
-        this.parameters.copy(null, options);
+        this.copy(null, options);
     }
 
     /**
@@ -184,11 +183,8 @@ public class SkeletonAnimation extends ControllableAnimation {
      * @return текущий ключевой кадр.
      */
     public SkeletonAnimationKeyFrame getCurrentKeyFrame() {
-        float duration = this.parameters.getDuration();
-        float time = this.parameters.getElapsedTime() - this.parameters.getDelay();
-        if (this.parameters.getCompletedRepeat() != 0) {
-            time -= this.parameters.getRepeatDelay();
-        }
+        float duration = this.duration;
+        float time = this.elapsedTime - this.delay - this.repeatDelay;
 
         int fSize = this.keyFrames.size();
         int index = 0;
@@ -222,46 +218,10 @@ public class SkeletonAnimation extends ControllableAnimation {
     }
 
     @Override
-    public boolean step(float elapsedTime) {
-        // Если анимацию нужно удалить.
-        if (this.state == State.REMOVE) return true;
-        // Если анимация остановлена.
-        if (this.state == State.STOP) return true;
-        // Если на паузе.
-        if (this.state == State.PAUSE) return false;
-
-        // Если пройденное время некорректно, то выходим.
-        //if(elapsedTime <= 0.0f) return false;
-        // Обновляем время в опциях.
-        if (!this.parameters.update(elapsedTime)) return false;
-
-        // Запускаем событие кадра анимации.
-        this.parameters.fireEvent(AnimationEvent.Type.STEP, this);
-
-        // Обновляем скелет.
+    public boolean stop(boolean gotoEnd) {
         this.update();
 
-        // Если анимация закончилась.
-        if (this.parameters.isEnded()) this.next();
-        //
-        return false;
-    }
-
-    private void next() {
-        this.repeat();
-
-        // Есои нет возможности продолжать анимацию.
-        if (!this.parameters.canRepeat()) {
-            // Останавливаем анимацию.
-            this.stop();
-        }
-    }
-
-    @Override
-    public void stop(boolean gotoEnd) {
-        super.stop(gotoEnd);
-
-        this.update();
+        return super.stop(gotoEnd);
     }
 
     @Override
@@ -274,14 +234,12 @@ public class SkeletonAnimation extends ControllableAnimation {
     /**
      * Обновляет скелет.
      */
+    @Override
     protected void update() {
         if (this.skeleton == null) return;
 
-        float duration = this.parameters.getDuration();
-        float time = this.parameters.getElapsedTime() - this.parameters.getDelay();
-        if (this.parameters.getCompletedRepeat() != 0) {
-            time -= this.parameters.getRepeatDelay();
-        }
+        float duration = this.duration;
+        float time = this.elapsedTime - this.delay - this.repeatDelay;
 
         int fSize = this.keyFrames.size();
         int index = 0;
@@ -294,7 +252,7 @@ public class SkeletonAnimation extends ControllableAnimation {
         SkeletonAnimationKeyFrame keyFrame2 = this.keyFrames
                 .get(index > fSize - 2 ? index : index + 1);
 
-        Easing easing = keyFrame1.easing != null ? keyFrame1.easing : this.parameters.getEasing();
+        Easing easing = keyFrame1.easing != null ? keyFrame1.easing : this.easing;
 
         float diff = (keyFrame2.time - keyFrame1.time) * duration;
         float now = time - keyFrame1.time * duration;

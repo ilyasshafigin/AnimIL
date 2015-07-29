@@ -106,19 +106,35 @@ public interface AnimationConstants {
     /**
      * Ключ метода события запуска анимации.
      */
+    String ON_BEGIN = "onBegin";
+    /**
+     * Ключ метода события запуска цикла анимации.
+     */
     String ON_START = "onStart";
     /**
-     * Ключ метода события остановки анимации.
+     * Ключ метода события окончания цикла анимации.
      */
-    String ON_STOP = "onStop";
+    String ON_END = "onEnd";
+    /**
+     * Ключ метода события окончания анимации.
+     */
+    String ON_COMPLETE = "onComplete";
+    /**
+     * Ключ метода события перезапуска анимации.
+     */
+    String ON_RESTART = "onRestart";
     /**
      * Ключ метода события паузы анимации.
      */
     String ON_PAUSE = "onPause";
     /**
-     * Ключ метода события повтора анимации.
+     * Ключ метода события продолжения анимации.
      */
-    String ON_LOOP = "onLoop";
+    String ON_RESUME = "onResume";
+    /**
+     * Ключ метода события остановки анимации.
+     */
+    String ON_STOP = "onStop";
     /**
      * Ключ метода события шага анимации.
      */

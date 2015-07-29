@@ -252,7 +252,7 @@ public class ParallelAnimation extends ControllableAnimation {
         if (options == null) throw new NullPointerException("options == null");
 
         this.children = children;
-        this.parameters.copy(options);
+        this.copy(options);
     }
 
     /**
@@ -275,7 +275,7 @@ public class ParallelAnimation extends ControllableAnimation {
         if (options == null) throw new NullPointerException("options == null");
 
         this.children = new Children();
-        this.parameters.copy(options);
+        this.copy(options);
     }
 
     /**
@@ -406,9 +406,7 @@ public class ParallelAnimation extends ControllableAnimation {
         boolean stopped = true;
         // Проходим по дочерним элементам.
         for (Child child : this.children) {
-            ControllableAnimation canimation = child.animation;
-            AnimationParameters cparameters = canimation.parameters;
-            stopped &= child.animation.step(cparameters.getTime(elapsedTime, this.parameters));
+            stopped &= child.animation.step(child.animation.getTime(elapsedTime, this));
         }
 
         // Возвращаем ...
@@ -440,8 +438,7 @@ public class ParallelAnimation extends ControllableAnimation {
      * @author Ilyas74
      * @version 0.0.1
      */
-    public static class ParallelAnimationBuilder implements
-            Builder<ParallelAnimation> {
+    public static class ParallelAnimationBuilder implements Builder<ParallelAnimation> {
 
         /**
          * Список дочерних элементов.

@@ -4,7 +4,7 @@
 package ru.ildev.anim.core;
 
 import ru.ildev.anim.easings.Easing;
-import ru.ildev.anim.events.AnimationAdapter;
+import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 
 /**
@@ -12,7 +12,7 @@ import ru.ildev.anim.events.AnimationListener;
  * объектов анимации.
  *
  * @author Shafigin Ilyas (Шафигин Ильяс)
- * @version 0.11.12
+ * @version 0.12.12
  */
 public class AnimationOptions {
 
@@ -39,7 +39,11 @@ public class AnimationOptions {
     /**
      * Обработчик событий анимации.
      */
-    public AnimationListener listener = new AnimationAdapter();
+    public AnimationListener listener = null;
+    /**
+     * Триггеры событий.
+     */
+    public int triggers = AnimationEvent.COMPLETE;
     /**
      * Максимальное количество повторений.
      */
@@ -94,10 +98,9 @@ public class AnimationOptions {
      * @param easing   эффект аниамции.
      * @param listener обработчик событий.
      */
-    public AnimationOptions(float duration, Easing easing,
-                            AnimationListener listener) {
+    public AnimationOptions(float duration, Easing easing, AnimationListener listener) {
         if (easing == null) throw new NullPointerException("easing == null");
-        if (listener == null) throw new NullPointerException("listener == null");
+        //if (listener == null) throw new NullPointerException("listener == null");
 
         this.duration = duration;
         this.easing = easing;
@@ -112,7 +115,7 @@ public class AnimationOptions {
      * @param listener обработчик событий.
      */
     public AnimationOptions(float duration, AnimationListener listener) {
-        if (listener == null) throw new NullPointerException("listener == null");
+        //if (listener == null) throw new NullPointerException("listener == null");
 
         this.duration = duration;
         this.listener = listener;
@@ -124,7 +127,7 @@ public class AnimationOptions {
      * @param listener обработчик событий.
      */
     public AnimationOptions(AnimationListener listener) {
-        if (listener == null) throw new NullPointerException("listener == null");
+        //if (listener == null) throw new NullPointerException("listener == null");
 
         this.listener = listener;
     }
@@ -143,6 +146,7 @@ public class AnimationOptions {
         this.timeScale = options.timeScale;
         this.easing = options.easing;
         this.listener = options.listener;
+        this.triggers = options.triggers;
         this.repeat = options.repeat;
         this.repeatDelay = options.repeatDelay;
         this.timeMode = options.timeMode;
@@ -152,21 +156,22 @@ public class AnimationOptions {
     /**
      * Конструктор, копирующий значения полей из объекта параметров анимации.
      *
-     * @param parameters опции.
+     * @param animation опции.
      */
-    public AnimationOptions(AnimationParameters parameters) {
-        if (parameters == null) throw new NullPointerException("parameters == null");
+    public AnimationOptions(ControllableAnimation animation) {
+        if (animation == null) throw new NullPointerException("animation == null");
 
-        this.duration = parameters.duration;
-        this.delay = parameters.delay;
-        this.fps = parameters.fps;
-        this.timeScale = parameters.timeScale;
-        this.easing = parameters.easing;
-        this.listener = parameters.listener;
-        this.repeat = parameters.repeat;
-        this.repeatDelay = parameters.repeatDelay;
-        this.timeMode = parameters.timeMode;
-        this.playMode = parameters.playMode;
+        this.duration = animation.duration;
+        this.delay = animation.delay;
+        this.fps = animation.fps;
+        this.timeScale = animation.timeScale;
+        this.easing = animation.easing;
+        this.listener = animation.listener;
+        this.triggers = animation.triggers;
+        this.repeat = animation.repeat;
+        this.repeatDelay = animation.repeatDelay;
+        this.timeMode = animation.timeMode;
+        this.playMode = animation.playMode;
     }
 
     /**
@@ -284,6 +289,33 @@ public class AnimationOptions {
     }
 
     /**
+     * Получает триггеры событий.
+     *
+     * @return триггеры событий.
+     */
+    public int getTriggers() {
+        return this.triggers;
+    }
+
+    /**
+     * Устанавливает триггеры событий.
+     *
+     * @param triggers триггеры событий.
+     */
+    public void setTriggers(int triggers) {
+        this.triggers = triggers;
+    }
+
+    /**
+     * Устанавливает триггер.
+     *
+     * @param trigger триггер.
+     */
+    public void setTrigger(int trigger) {
+        this.triggers |= trigger;
+    }
+
+    /**
      * Получает количество повторов анимации.
      *
      * @return количество повторов анимации.
@@ -383,6 +415,7 @@ public class AnimationOptions {
         this.timeScale = options.timeScale;
         this.easing = options.easing;
         this.listener = options.listener;
+        this.triggers = options.triggers;
         this.repeat = options.repeat;
         this.repeatDelay = options.repeatDelay;
         this.timeMode = options.timeMode;
@@ -398,6 +431,7 @@ public class AnimationOptions {
         options.timeScale = this.timeScale;
         options.easing = this.easing;
         options.listener = this.listener;
+        options.triggers = this.triggers;
         options.repeat = this.repeat;
         options.repeatDelay = this.repeatDelay;
         options.timeMode = this.timeMode;
@@ -420,6 +454,7 @@ public class AnimationOptions {
         builder.append(", timeScale=").append(this.timeScale);
         builder.append(", easing=").append(this.easing);
         builder.append(", listener=").append(this.listener);
+        builder.append(", trigger=").append(this.triggers);
         builder.append(", repeat=").append(this.repeat);
         builder.append(", repeatDelay=").append(this.repeatDelay);
         builder.append(", timeMode=").append(this.timeMode);
@@ -439,11 +474,10 @@ public class AnimationOptions {
         int result = 1;
         result = prime * result + Float.floatToIntBits(this.delay);
         result = prime * result + Float.floatToIntBits(this.duration);
-        result = prime * result
-                + (this.easing == null ? 0 : this.easing.hashCode());
+        result = prime * result + (this.easing == null ? 0 : this.easing.hashCode());
         result = prime * result + this.fps;
-        result = prime * result
-                + (this.listener == null ? 0 : this.listener.hashCode());
+        result = prime * result + (this.listener == null ? 0 : this.listener.hashCode());
+        result = prime * result + this.triggers;
         result = prime * result + this.playMode;
         result = prime * result + this.repeat;
         result = prime * result + Float.floatToIntBits(this.repeatDelay);
@@ -482,6 +516,7 @@ public class AnimationOptions {
             } else if (!this.listener.equals(other.listener)) {
                 return false;
             }
+            if (this.triggers != other.triggers) return false;
             if (this.playMode != other.playMode) return false;
             if (this.repeat != other.repeat) return false;
             if (this.repeatDelay != other.repeatDelay) return false;
