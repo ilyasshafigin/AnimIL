@@ -257,7 +257,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param name имя.
      */
     static FieldProperty<Integer> ofARGB(String name) {
-        return new AbstractFieldProperty<>(name, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, TypeEvaluator.RGBA);
     }
 
     /**
@@ -267,7 +267,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param end  конечное значение.
      */
     static FieldProperty<Integer> ofARGB(String name, int end) {
-        return new AbstractFieldProperty<>(name, end, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -278,7 +278,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param end   конечное значение.
      */
     static FieldProperty<Integer> ofARGB(String name, int begin, int end) {
-        return new AbstractFieldProperty<>(name, begin, end, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, begin, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -289,7 +289,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param easing эффект анимации.
      */
     static FieldProperty<Integer> ofARGB(String name, int end, Easing easing) {
-        return new AbstractFieldProperty<>(name, end, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -301,7 +301,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param easing эффект анимации.
      */
     static FieldProperty<Integer> ofARGB(String name, int begin, int end, Easing easing) {
-        return new AbstractFieldProperty<>(name, begin, end, easing, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, begin, end, easing, TypeEvaluator.RGBA);
     }
 
     /**
@@ -312,7 +312,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param value     значение.
      */
     static FieldProperty<Integer> ofARGB(String name, String operation, int value) {
-        return new AbstractFieldProperty<>(name, operation, value, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, operation, value, TypeEvaluator.RGBA);
     }
 
     /**
@@ -324,7 +324,7 @@ public interface FieldProperty<T> extends Property<T> {
      * @param easing    эффект анимации.
      */
     static FieldProperty<Integer> ofARGB(String name, String operation, int value, Easing easing) {
-        return new AbstractFieldProperty<>(name, operation, value, easing, TypeEvaluator.ARGB);
+        return new AbstractFieldProperty<>(name, operation, value, easing, TypeEvaluator.RGBA);
     }
 
 }

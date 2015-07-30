@@ -11,11 +11,11 @@ package ru.ildev.anim.plugins.property.evaluator;
 public interface TypeEvaluator<T> {
 
     /**  */
-    TypeEvaluator<Integer> INTEGER = new NumberEvaluator.Integer();
+    TypeEvaluator<Integer> INTEGER = new IntegerEvaluator();
     /**  */
-    TypeEvaluator<Float> FLOAT = new NumberEvaluator.Float();
+    TypeEvaluator<Float> FLOAT = new FloatEvaluator();
     /**  */
-    TypeEvaluator<Integer> ARGB = new NumberEvaluator.ARGB();
+    TypeEvaluator<Integer> RGBA = new RGBAEvaluator();
 
     /**
      * @param position

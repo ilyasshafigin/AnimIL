@@ -444,7 +444,7 @@ public class Animator implements Runnable {
         }*/
         // Upgrade for Java 8
         this.animations.stream()
-                .filter(animation -> animation.step(elapsedTime))
+                .filter(animation -> animation != null && animation.step(elapsedTime))
                 .forEach(this.removed::add);
     }
 

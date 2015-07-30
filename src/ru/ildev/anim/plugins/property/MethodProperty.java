@@ -282,7 +282,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param end     конечное значение.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName) {
-        return new AbstractMethodProperty<>(getName, setName, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, TypeEvaluator.RGBA);
     }
 
     /**
@@ -293,7 +293,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param end     конечное значение.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName, int end) {
-        return new AbstractMethodProperty<>(getName, setName, end, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -305,7 +305,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param end     конечное значение.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName, int begin, int end) {
-        return new AbstractMethodProperty<>(getName, setName, begin, end, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, begin, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -317,7 +317,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param easing  эффект анимации.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName, int end, Easing easing) {
-        return new AbstractMethodProperty<>(getName, setName, end, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -330,7 +330,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param easing  эффект анимации.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName, int begin, int end, Easing easing) {
-        return new AbstractMethodProperty<>(getName, setName, begin, end, easing, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, begin, end, easing, TypeEvaluator.RGBA);
     }
 
     /**
@@ -342,7 +342,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param value     значение.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName, String operation, int value) {
-        return new AbstractMethodProperty<>(getName, setName, operation, value, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, operation, value, TypeEvaluator.RGBA);
     }
 
     /**
@@ -355,7 +355,7 @@ public interface MethodProperty<T> extends Property<T> {
      * @param easing    эффект анимации.
      */
     static MethodProperty<Integer> ofARGB(String getName, String setName, String operation, int value, Easing easing) {
-        return new AbstractMethodProperty<>(getName, setName, operation, value, easing, TypeEvaluator.ARGB);
+        return new AbstractMethodProperty<>(getName, setName, operation, value, easing, TypeEvaluator.RGBA);
     }
 
 }

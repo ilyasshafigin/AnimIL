@@ -257,7 +257,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param index индекс.
      */
     static ArrayProperty<Integer> ofARGB(int index) {
-        return new AbstractArrayProperty<>(index, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, TypeEvaluator.RGBA);
     }
 
     /**
@@ -267,7 +267,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param end   конечное значение.
      */
     static ArrayProperty<Integer> ofARGB(int index, int end) {
-        return new AbstractArrayProperty<>(index, end, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -278,7 +278,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param end   конечное значение.
      */
     public static ArrayProperty<Integer> ofARGB(int index, int begin, int end) {
-        return new AbstractArrayProperty<>(index, begin, end, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, begin, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -289,7 +289,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param easing эффект анимации.
      */
     static ArrayProperty<Integer> ofARGB(int index, int end, Easing easing) {
-        return new AbstractArrayProperty<>(index, end, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, end, TypeEvaluator.RGBA);
     }
 
     /**
@@ -301,7 +301,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param easing эффект анимации.
      */
     static ArrayProperty<Integer> ofARGB(int index, int begin, int end, Easing easing) {
-        return new AbstractArrayProperty<>(index, begin, end, easing, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, begin, end, easing, TypeEvaluator.RGBA);
     }
 
     /**
@@ -312,7 +312,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param value     значение.
      */
     static ArrayProperty<Integer> ofARGB(int index, String operation, int value) {
-        return new AbstractArrayProperty<>(index, operation, value, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, operation, value, TypeEvaluator.RGBA);
     }
 
     /**
@@ -324,7 +324,7 @@ public interface ArrayProperty<T> extends Property<T> {
      * @param easing    эффект анимации.
      */
     static ArrayProperty<Integer> ofARGB(int index, String operation, int value, Easing easing) {
-        return new AbstractArrayProperty<>(index, operation, value, easing, TypeEvaluator.ARGB);
+        return new AbstractArrayProperty<>(index, operation, value, easing, TypeEvaluator.RGBA);
     }
 
 }
