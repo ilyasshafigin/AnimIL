@@ -406,8 +406,17 @@ public class Tween extends ControllableAnimation implements AnimationConstants {
      * @param callback
      * @return
      */
-    public Tween setCallback(AnimationListener callback) {
+    public Tween callback(AnimationListener callback) {
         this.options.setListener(callback);
+        return this;
+    }
+
+    /**
+     * @param triggers
+     * @return
+     */
+    public Tween triggers(int triggers) {
+        this.options.setTriggers(triggers);
         return this;
     }
 
