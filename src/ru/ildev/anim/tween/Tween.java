@@ -4,6 +4,7 @@ import ru.ildev.anim.core.AnimationOptions;
 import ru.ildev.anim.core.Animator;
 import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.easings.Easing;
+import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import java.util.Map;
 public class Tween extends ControllableAnimation {
 
     private static int combinedAttrsLimit = 4;
+    private static int waypointsLimit = 0;
+
     private static final Map<Class<?>, TweenAccessor<?>> registeredAccessors = new HashMap<>();
 
     /**
@@ -23,6 +26,13 @@ public class Tween extends ControllableAnimation {
      */
     public static void setCombinedAttributesLimit(int limit) {
         combinedAttrsLimit = limit;
+    }
+
+    /**
+     *
+     */
+    public static void setWaypointsLimit(int limit) {
+        Tween.waypointsLimit = limit;
     }
 
     /**
@@ -52,6 +62,7 @@ public class Tween extends ControllableAnimation {
         Tween tween = new Tween();
         tween.setup(target, tweenType, duration);
         tween.ease(Easing.QUAD_IN_OUT);
+        tween.path(TweenPath.CATMULL_ROM);
         return tween;
     }
 
@@ -65,6 +76,7 @@ public class Tween extends ControllableAnimation {
         Tween tween = new Tween();
         tween.setup(target, tweenType, duration);
         tween.ease(Easing.QUAD_IN_OUT);
+        tween.path(TweenPath.CATMULL_ROM);
         tween.options.setPlayMode(BACKWARD);
         return tween;
     }
@@ -89,7 +101,7 @@ public class Tween extends ControllableAnimation {
         Tween tween = new Tween();
         tween.setup(null, -1, 0);
         tween.options.setListener(callback);
-        //tween.setCallbackTriggers(TweenCallback.START);
+        tween.options.setTriggers(AnimationEvent.START);
         return tween;
     }
 
@@ -109,11 +121,17 @@ public class Tween extends ControllableAnimation {
     private TweenAccessor<Object> accessor;
     private int type;
     private AnimationOptions options;
+    private TweenPath path;
 
+    private int waypointsCount;
     private int combinedAttrsCount;
+
     private final float[] startValues;
     private final float[] targetValues;
+    private final float[] waypoints;
+
     private float[] accessorBuffer;
+    private float[] pathBuffer;
 
     /**
      *
@@ -122,13 +140,17 @@ public class Tween extends ControllableAnimation {
         this.target = null;
         this.targetClass = null;
         this.accessor = null;
+        this.path = null;
         this.type = -1;
         this.options = new AnimationOptions();
         this.combinedAttrsCount = 0;
+        this.waypointsCount = 0;
 
         this.startValues = new float[combinedAttrsLimit];
         this.targetValues = new float[combinedAttrsLimit];
+        this.waypoints = new float[waypointsLimit * combinedAttrsLimit];
         this.accessorBuffer = new float[combinedAttrsLimit];
+        this.pathBuffer = new float[(2 + waypointsLimit) * combinedAttrsLimit];
     }
 
     private void setup(Object target, int tweenType, float duration) {
@@ -257,11 +279,89 @@ public class Tween extends ControllableAnimation {
     }
 
     /**
+     * @param targetValue
+     * @return
+     */
+    public Tween waypoint(float targetValue) {
+        if (this.waypointsCount == waypointsLimit) this.throwWaypointsLimitReached();
+        this.waypoints[this.waypointsCount] = targetValue;
+        this.waypointsCount += 1;
+        return this;
+    }
+
+    /**
+     * @param targetValue1
+     * @param targetValue2
+     * @return
+     */
+    public Tween waypoint(float targetValue1, float targetValue2) {
+        if (this.waypointsCount == waypointsLimit) this.throwWaypointsLimitReached();
+        this.waypoints[this.waypointsCount * 2] = targetValue1;
+        this.waypoints[this.waypointsCount * 2 + 1] = targetValue2;
+        this.waypointsCount += 1;
+        return this;
+    }
+
+    /**
+     * @param targetValue1
+     * @param targetValue2
+     * @param targetValue3
+     * @return
+     */
+    public Tween waypoint(float targetValue1, float targetValue2, float targetValue3) {
+        if (this.waypointsCount == waypointsLimit) this.throwWaypointsLimitReached();
+        this.waypoints[this.waypointsCount * 3] = targetValue1;
+        this.waypoints[this.waypointsCount * 3 + 1] = targetValue2;
+        this.waypoints[this.waypointsCount * 3 + 2] = targetValue3;
+        this.waypointsCount += 1;
+        return this;
+    }
+
+    /**
+     * @param targetValues
+     * @return
+     */
+    public Tween waypoint(float... targetValues) {
+        if (this.waypointsCount == waypointsLimit) this.throwWaypointsLimitReached();
+        System.arraycopy(targetValues, 0, this.waypoints, this.waypointsCount * targetValues.length, targetValues.length);
+        this.waypointsCount += 1;
+        return this;
+    }
+
+    /**
+     * @param path
+     * @return
+     */
+    public Tween path(TweenPath path) {
+        this.path = path;
+        return this;
+    }
+
+    /**
      * @param delay
      * @return
      */
     public Tween delay(float delay) {
         this.options.delay += delay;
+        return this;
+    }
+
+    /**
+     *
+     * @param fps
+     * @return
+     */
+    public Tween fps(int fps) {
+        this.options.fps = fps;
+        return this;
+    }
+
+    /**
+     * @param scale
+     * @return
+     */
+    public Tween timeScale(float scale) {
+        this.options.timeScale = scale;
         return this;
     }
 
@@ -289,6 +389,19 @@ public class Tween extends ControllableAnimation {
     }
 
     /**
+     *
+     * @param mode
+     * @return
+     * @see ru.ildev.anim.core.AnimationConstants#FRAMES
+     * @see ru.ildev.anim.core.AnimationConstants#MILLISECONDS
+     * @see ru.ildev.anim.core.AnimationConstants#SECONDS
+     */
+    public Tween timeMode(int mode) {
+        this.options.timeMode = mode;
+        return this;
+    }
+
+    /**
      * @param callback
      * @return
      */
@@ -303,7 +416,6 @@ public class Tween extends ControllableAnimation {
      */
     public Tween start(Animator animator) {
         animator.animate(this);
-        this.initialize();
         return this;
     }
 
@@ -311,7 +423,7 @@ public class Tween extends ControllableAnimation {
         if (this.target == null) return this;
 
         this.accessor = (TweenAccessor<Object>) registeredAccessors.get(this.targetClass);
-        if (this.accessor == null && target instanceof TweenAccessor)
+        if (this.accessor == null && this.target instanceof TweenAccessor)
             this.accessor = (TweenAccessor<Object>) this.target;
         if (this.combinedAttrsCount > combinedAttrsLimit) this.throwCombinedAttrsLimitReached();
 
@@ -322,6 +434,8 @@ public class Tween extends ControllableAnimation {
     @Override
     public void start() {
         super.start();
+
+        this.initialize();
 
         if (this.accessor != null)
             this.combinedAttrsCount = this.accessor.get(this.target, this.type, this.startValues);
@@ -337,9 +451,23 @@ public class Tween extends ControllableAnimation {
     @Override
     protected boolean update(float elapsedTime) {
         float position = this.getPosition(this.easing);
-        for (int i = 0; i < this.combinedAttrsCount; i++) {
-            this.accessorBuffer[i] = this.startValues[i] + position * (this.targetValues[i] - this.startValues[i]);
+
+        if (this.waypointsCount == 0 || this.path == null) {
+            for (int i = 0; i < this.combinedAttrsCount; i++) {
+                this.accessorBuffer[i] = this.startValues[i] + position * (this.targetValues[i] - this.startValues[i]);
+            }
+        } else {
+            for (int i = 0; i < this.combinedAttrsCount; i++) {
+                this.pathBuffer[0] = this.startValues[i];
+                this.pathBuffer[1 + this.waypointsCount] = this.targetValues[i];
+                for (int j = 0; j < this.waypointsCount; j++) {
+                    this.pathBuffer[j + 1] = this.waypoints[j * this.combinedAttrsCount + i];
+                }
+
+                this.accessorBuffer[i] = this.path.compute(position, this.pathBuffer, this.waypointsCount + 2);
+            }
         }
+
         this.accessor.set(this.target, this.type, this.accessorBuffer);
 
         return true;
@@ -352,6 +480,14 @@ public class Tween extends ControllableAnimation {
                 + "attributes in a tween. You can raise this limit with "
                 + "Tween.setCombinedAttributesLimit(), which should be called once "
                 + "in application initialization code.";
+        throw new RuntimeException(msg);
+    }
+
+    private void throwWaypointsLimitReached() {
+        String msg = "You cannot add more than " + waypointsLimit + " "
+                + "waypoints to a tween. You can raise this limit with "
+                + "Tween.setWaypointsLimit(), which should be called once in "
+                + "application initialization code.";
         throw new RuntimeException(msg);
     }
 
