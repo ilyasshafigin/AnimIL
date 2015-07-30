@@ -9,6 +9,7 @@ import ru.ildev.math.MoreMath;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Класс кости на плоскости.
@@ -127,9 +128,7 @@ public class Bone implements Cloneable, Iterable<Bone> {
         //this.maxAngle = bone.maxAngle;
         this.length = bone.length;
         this.parent = bone.parent;
-        for (Bone child : bone.children) {
-            this.children.add(child.clone());
-        }
+        this.children.addAll(bone.children.stream().map(Bone::clone).collect(Collectors.toList()));
     }
 
     @Override
@@ -142,9 +141,7 @@ public class Bone implements Cloneable, Iterable<Bone> {
         //this.maxAngle = bone.maxAngle;
         clone.length = this.length;
         clone.parent = this.parent;
-        for (Bone child : this.children) {
-            clone.children.add(child.clone());
-        }
+        clone.children.addAll(this.children.stream().map(Bone::clone).collect(Collectors.toList()));
         return clone;
     }
 
@@ -477,12 +474,12 @@ public class Bone implements Cloneable, Iterable<Bone> {
      */
     public void removeAll() {
         // Проходим по дочерним костям.
-        for (Bone child : this.children) {
+        this.children.forEach((child) -> {
             // Удаляем родителя удаляемого объекта.
             child.parent = null;
             // Удаляем его из списка.
             // this.children.remove(child);
-        }
+        });
         // Очищаем список дочерних костей.
         this.children.clear();
     }
@@ -516,10 +513,8 @@ public class Bone implements Cloneable, Iterable<Bone> {
         }
         */
         // Проходим по дочерним костям.
-        for (Bone child : this.children) {
-            // Обновляем дочернюю кость.
-            child.update();
-        }
+        // Обновляем дочернюю кость.
+        this.children.forEach(Bone::update);
     }
 
     /**
@@ -680,9 +675,7 @@ public class Bone implements Cloneable, Iterable<Bone> {
      * @return список костей.
      */
     public List<Bone> toList() {
-        List<Bone> bones = new ArrayList<>();
-        this.toList(bones);
-        return bones;
+        return this.toList(new ArrayList<>());
     }
 
     /**
@@ -693,9 +686,7 @@ public class Bone implements Cloneable, Iterable<Bone> {
      */
     public List<Bone> toList(List<Bone> bones) {
         bones.add(this);
-        for (Bone child : this.children) {
-            child.toList(bones);
-        }
+        this.children.forEach((child) -> child.toList(bones));
         return bones;
     }
 

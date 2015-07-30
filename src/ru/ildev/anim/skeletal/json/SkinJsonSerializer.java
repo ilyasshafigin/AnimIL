@@ -16,7 +16,7 @@ public class SkinJsonSerializer implements JsonSerializer<Skin> {
     @Override
     public JsonElement serialize(Skin skin, Type type, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("patches", context.serialize(skin.getList()));
+        jsonObject.add("patches", context.serialize(skin.getMap().values()));
         return jsonObject;
     }
 

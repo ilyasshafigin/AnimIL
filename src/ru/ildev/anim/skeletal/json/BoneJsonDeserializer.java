@@ -16,8 +16,7 @@ public class BoneJsonDeserializer implements JsonDeserializer<Bone> {
     }.getType();
 
     @Override
-    public Bone deserialize(JsonElement json, Type type,
-                            JsonDeserializationContext context) throws JsonParseException {
+    public Bone deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         JsonElement jsonName = jsonObject.get("name");
         JsonElement jsonX = jsonObject.get("x");
@@ -42,8 +41,7 @@ public class BoneJsonDeserializer implements JsonDeserializer<Bone> {
         bone.setLength(length);
 
         if (jsonChildren != null) {
-            ArrayList<Bone> children = context.<ArrayList<Bone>>deserialize(
-                    jsonChildren.getAsJsonArray(), this.childrenType);
+            ArrayList<Bone> children = context.deserialize(jsonChildren.getAsJsonArray(), this.childrenType);
             for (Bone child : children) {
                 bone.add(child);
             }

@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactManager">
+    <artifact type="jar" name="AnimIL-0.5.0">
+      <output-path>$PROJECT_DIR$/build/jar</output-path>
+      <root id="archive" name="AnimIL-0.5.0.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="AnimIL" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/libs/gson-2.2.4.jar" path-in-jar="/" />
+        <element id="module-output" name="IL" />
+      </root>
+    </artifact>
+    <artifact type="jar" name="AnimIL-0.5.0-sources">
+      <output-path>$PROJECT_DIR$/build/jar</output-path>
+      <root id="archive" name="AnimIL-0.5.0-sources.jar">
+        <element id="dir-copy" path="$PROJECT_DIR$/src" />
+      </root>
+    </artifact>
+  </component>
   <component name="CompilerConfiguration">
     <resourceExtensions />
     <wildcardResourcePatterns>

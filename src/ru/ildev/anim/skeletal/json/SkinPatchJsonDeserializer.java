@@ -20,13 +20,8 @@ public class SkinPatchJsonDeserializer implements JsonDeserializer<SkinPatch> {
         JsonElement jsonCenterX = jsonObject.get("centerX");
         JsonElement jsonCenterY = jsonObject.get("centerY");
 
-        if (jsonBone == null) {
-            throw new JsonSyntaxException("\"bone\"");
-        }
-
-        if (jsonTexture == null) {
-            throw new JsonSyntaxException("\"texture\"");
-        }
+        if (jsonBone == null) throw new JsonSyntaxException("\"bone\"");
+        if (jsonTexture == null) throw new JsonSyntaxException("\"texture\"");
 
         String bone = jsonBone.getAsString();
         String texture = jsonTexture.getAsString();

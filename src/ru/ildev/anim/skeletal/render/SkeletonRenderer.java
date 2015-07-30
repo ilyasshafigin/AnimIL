@@ -42,8 +42,7 @@ public abstract class SkeletonRenderer {
      */
     protected void draw(Bone bone, Skin skin, Textures textures) {
         SkinPatch patch = skin != null ? skin.getPatch(bone) : null;
-        Texture texture = textures != null && patch != null ? textures
-                .getTexture(patch.getTextureName()) : null;
+        Texture texture = textures != null && patch != null ? textures.getTexture(patch.getTextureName()) : null;
 
         float boneX = bone.getX();
         float boneY = bone.getY();
@@ -53,15 +52,11 @@ public abstract class SkeletonRenderer {
         float textureWidth = texture != null ? texture.getWidth() : 0.0f;
         float textureHeight = texture != null ? texture.getHeight() : 0.0f;
 
-        Transform2 textureTransform = texture != null ? texture.getTransform()
-                : null;
+        Transform2 textureTransform = texture != null ? texture.getTransform() : null;
 
-        float patchX = patch != null ? (patch.getCenterX() - 0.5f)
-                * textureWidth : 0.5f;
-        float patchY = patch != null ? (patch.getCenterY() - 0.5f)
-                * textureHeight : 0.5f;
-        float patchAngle = patch != null ? MoreMath.radians(patch.getAngle())
-                : 0.0f;
+        float patchX = patch != null ? (patch.getCenterX() - 0.5f) * textureWidth : 0.5f;
+        float patchY = patch != null ? (patch.getCenterY() - 0.5f) * textureHeight : 0.5f;
+        float patchAngle = patch != null ? MoreMath.radians(patch.getAngle()) : 0.0f;
 
         //this.save();
 
@@ -87,9 +82,7 @@ public abstract class SkeletonRenderer {
         this.rotate(-patchAngle);
         this.translate(boneLength, 0.0f);
 
-        for (Bone child : bone) {
-            this.draw(child, skin, textures);
-        }
+        bone.forEach(child -> this.draw(child, skin, textures));
 
         this.translate(-boneLength, 0.0f);
         this.rotate(-boneAngle);

@@ -31,15 +31,13 @@ public class TexturesJsonDeserializer implements JsonDeserializer<Textures> {
     }
 
     @Override
-    public Textures deserialize(JsonElement json, Type type,
-                                JsonDeserializationContext context) throws JsonParseException {
+    public Textures deserialize(JsonElement json, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         JsonElement jsonFolder = jsonObject.get("folder");
         JsonElement jsonTextures = jsonObject.get("textures");
 
-        if (jsonTextures == null) {
-            throw new JsonSyntaxException("\"textures\" of undefined");
-        }
+        if (jsonTextures == null) throw new JsonSyntaxException("\"textures\" of undefined");
 
         JsonArray jsonTexturesArray = jsonTextures.getAsJsonArray();
 
@@ -55,9 +53,7 @@ public class TexturesJsonDeserializer implements JsonDeserializer<Textures> {
             JsonElement jsonHeight = jsonTexture.get("height");
             JsonElement jsonTransform = jsonTexture.get("transform");
 
-            if (jsonName == null) {
-                throw new JsonSyntaxException("\"name\" of undefined");
-            }
+            if (jsonName == null) throw new JsonSyntaxException("\"name\" of undefined");
 
             String name = jsonName.getAsString();
             String path = jsonPath != null ? jsonPath.getAsString() : "";
@@ -65,15 +61,12 @@ public class TexturesJsonDeserializer implements JsonDeserializer<Textures> {
             try {
                 image = ImageIO.read(new File(this.root, folder + path));
             } catch (IOException exception) {
-                Animator.LOGGER.throwing(this.getClass().getSimpleName(),
-                        "deserialize", exception);
+                Animator.LOGGER.throwing(this.getClass().getSimpleName(), "deserialize", exception);
                 return null;
             }
 
-            float width = jsonWidth != null ? jsonWidth.getAsFloat()
-                    : image.getWidth();
-            float height = jsonHeight != null ? jsonHeight
-                    .getAsFloat() : image.getHeight();
+            float width = jsonWidth != null ? jsonWidth.getAsFloat() : image.getWidth();
+            float height = jsonHeight != null ? jsonHeight.getAsFloat() : image.getHeight();
             Transform2 transform = null;
             if (jsonTransform != null) {
                 transform = new Transform2();

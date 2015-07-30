@@ -30,8 +30,7 @@ public class SkeletonRendererContext2D extends SkeletonRenderer {
      * @param skin
      * @param textures
      */
-    public void draw(Context2D ctx, Skeleton skeleton, Skin skin,
-                     Textures textures) {
+    public void draw(Context2D ctx, Skeleton skeleton, Skin skin, Textures textures) {
         this.initialize(ctx);
         this.draw(skeleton, skin, textures);
     }
@@ -39,8 +38,7 @@ public class SkeletonRendererContext2D extends SkeletonRenderer {
     @Override
     protected void draw(Bone bone, Skin skin, Textures textures) {
         SkinPatch patch = skin != null ? skin.getPatch(bone) : null;
-        Texture texture = textures != null && patch != null ? textures
-                .getTexture(patch.getTextureName()) : null;
+        Texture texture = textures != null && patch != null ? textures.getTexture(patch.getTextureName()) : null;
 
         float boneX = bone.getX();
         float boneY = bone.getY();
@@ -50,15 +48,11 @@ public class SkeletonRendererContext2D extends SkeletonRenderer {
         float textureWidth = texture != null ? texture.getWidth() : 0.0f;
         float textureHeight = texture != null ? texture.getHeight() : 0.0f;
 
-        Transform2 textureTransform = texture != null ? texture.getTransform()
-                : null;
+        Transform2 textureTransform = texture != null ? texture.getTransform() : null;
 
-        float patchX = patch != null ? (patch.getCenterX() - 0.5f)
-                * textureWidth : 0.5f;
-        float patchY = patch != null ? (patch.getCenterY() - 0.5f)
-                * textureHeight : 0.5f;
-        float patchAngle = patch != null ? MoreMath.radians(patch.getAngle())
-                : 0.0f;
+        float patchX = patch != null ? (patch.getCenterX() - 0.5f) * textureWidth : 0.5f;
+        float patchY = patch != null ? (patch.getCenterY() - 0.5f) * textureHeight : 0.5f;
+        float patchAngle = patch != null ? MoreMath.radians(patch.getAngle()) : 0.0f;
 
         // this.save();
 
@@ -81,16 +75,13 @@ public class SkeletonRendererContext2D extends SkeletonRenderer {
         this.draw(bone, patch, texture);
 
         if (textureTransform != null) {
-            this.ctx.setTransform(tx0[0], tx0[1], tx0[2], tx0[3], tx0[4],
-                    tx0[5]);
+            this.ctx.setTransform(tx0[0], tx0[1], tx0[2], tx0[3], tx0[4], tx0[5]);
         }
 
         this.ctx.restoreState();
         this.ctx.translate(boneLength, 0.0f);
 
-        for (Bone child : bone) {
-            this.draw(child, skin, textures);
-        }
+        bone.forEach(child -> this.draw(child, skin, textures));
 
         this.ctx.restore();
     }

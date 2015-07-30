@@ -42,9 +42,9 @@ public interface AnimationPlugin {
     /**
      * Запускается после окончания анимации.
      *
-     * @param parameters анимация.
+     * @param animation анимация.
      */
-    void end(ControllableAnimation parameters);
+    void end(ControllableAnimation animation);
 
     /**
      * Обновляет плагин.

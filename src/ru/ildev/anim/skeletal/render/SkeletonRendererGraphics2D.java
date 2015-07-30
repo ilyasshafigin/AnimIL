@@ -29,8 +29,7 @@ public class SkeletonRendererGraphics2D extends SkeletonRenderer {
      * @param skin
      * @param textures
      */
-    public void draw(Graphics2D g, Skeleton skeleton, Skin skin,
-                     Textures textures) {
+    public void draw(Graphics2D g, Skeleton skeleton, Skin skin, Textures textures) {
         this.initialize(g);
         this.draw(skeleton, skin, textures);
     }

@@ -4,8 +4,6 @@ import com.google.gson.*;
 import ru.ildev.anim.skeletal.SkeletonAnimationKeyFrame;
 
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Shafigin Ilyas (Шафигин Ильяс) <Ilyas74>
@@ -18,18 +16,15 @@ public class SkeletonAnimationKeyFrameJsonSerializer implements
                                  JsonSerializationContext context) {
         String name = keyFrame.getName();
         float time = keyFrame.getTime();
-        Map<String, float[]> boneKeyFrames = keyFrame.getBoneKeyFrames();
 
         JsonObject jsonBoneKeyFrames = new JsonObject();
-        for (Entry<String, float[]> entry : boneKeyFrames.entrySet()) {
-            float[] boneFrame = entry.getValue();
-
+        keyFrame.getBoneKeyFrames().forEach((boneName, boneFrame) -> {
             JsonArray jsonBoneKeyFrame = new JsonArray();
-            for (int i = 0; i < boneFrame.length; i++) {
-                jsonBoneKeyFrame.add(new JsonPrimitive(boneFrame[i]));
+            for (float aBoneFrame : boneFrame) {
+                jsonBoneKeyFrame.add(new JsonPrimitive(aBoneFrame));
             }
-            jsonBoneKeyFrames.add(entry.getKey(), jsonBoneKeyFrame);
-        }
+            jsonBoneKeyFrames.add(boneName, jsonBoneKeyFrame);
+        });
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", name);

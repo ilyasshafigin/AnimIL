@@ -15,8 +15,7 @@ import java.lang.reflect.Type;
 public class BoneJsonSerializer implements JsonSerializer<Bone> {
 
     @Override
-    public JsonElement serialize(Bone bone, Type type,
-                                 JsonSerializationContext context) {
+    public JsonElement serialize(Bone bone, Type type, JsonSerializationContext context) {
         String name = bone.getName();
         Vector2 position = bone.getPosition();
         float angle = bone.getAngle();

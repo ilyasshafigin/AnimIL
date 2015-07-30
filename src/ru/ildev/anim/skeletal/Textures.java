@@ -3,7 +3,9 @@
  */
 package ru.ildev.anim.skeletal;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Класс, объединяющий сразу несколько текстур и предоставляющий быстрый доступ
@@ -12,16 +14,12 @@ import java.util.*;
  * @author Shafigin Ilyas <ilyas174@gmail.com>
  * @version 0.1.0
  */
-public class Textures implements Iterable<Texture> {
+public class Textures {
 
     /**
      * Карта текстур.
      */
     protected Map<String, Texture> map = new HashMap<>();
-    /**
-     * Список текстур.
-     */
-    protected List<Texture> list = new ArrayList<>();
     /**
      * Путь к папке, в которой находятся текстуры.
      */
@@ -41,13 +39,9 @@ public class Textures implements Iterable<Texture> {
     public Textures(Texture... textures) {
         if (textures == null) throw new NullPointerException("textures == null");
 
-        for (int i = 0; i < textures.length; i++) {
-            Texture texture = textures[i];
-
-            if (texture == null) throw new NullPointerException("texture[" + i + "] == null");
-
+        for (Texture texture : textures) {
+            if (texture == null) throw new NullPointerException("texture in array is null");
             this.map.put(texture.name, texture);
-            this.list.add(texture);
         }
     }
 
@@ -59,33 +53,10 @@ public class Textures implements Iterable<Texture> {
     public Textures(List<Texture> textures) {
         if (textures == null) throw new NullPointerException("textures == null");
 
-        int tSize = textures.size();
-        for (int i = 0; i < tSize; i++) {
-            Texture texture = textures.get(i);
-
-            if (texture == null) throw new NullPointerException("texture(" + i + ") == null");
-
+        for (Texture texture : textures) {
+            if (texture == null) throw new NullPointerException("texture in list is null");
             this.map.put(texture.name, texture);
-            this.list.add(texture);
         }
-    }
-
-    /**
-     * Получает карту текстур.
-     *
-     * @return карту текстур.
-     */
-    public Map<String, Texture> getTexturesMap() {
-        return this.map;
-    }
-
-    /**
-     * Получает список текстур.
-     *
-     * @return список текстур.
-     */
-    public List<Texture> getTexturesList() {
-        return this.list;
     }
 
     /**
@@ -119,16 +90,6 @@ public class Textures implements Iterable<Texture> {
     }
 
     /**
-     * Получает текстуру под заданным индексом.
-     *
-     * @param index индекс.
-     * @return текстуру.
-     */
-    public Texture getTexture(int index) {
-        return this.list.get(index);
-    }
-
-    /**
      * Добавляет текстуру в объект.
      *
      * @param texture текстура.
@@ -137,11 +98,9 @@ public class Textures implements Iterable<Texture> {
         if (texture == null) return;
         if (this.map.containsKey(texture.name)) {
             this.map.remove(texture.name);
-            this.list.remove(texture);
         }
 
         this.map.put(texture.name, texture);
-        this.list.add(texture);
     }
 
     /**
@@ -153,9 +112,7 @@ public class Textures implements Iterable<Texture> {
     public Texture removeTexture(String name) {
         if (name == null) return null;
 
-        Texture removed = this.map.remove(name);
-        if (removed != null) this.list.remove(removed);
-        return removed;
+        return this.map.remove(name);
     }
 
     /**
@@ -166,7 +123,6 @@ public class Textures implements Iterable<Texture> {
     public void removeTexture(Texture texture) {
         if (texture == null) return;
         this.map.remove(texture.name);
-        this.list.remove(texture);
     }
 
     /**
@@ -175,12 +131,14 @@ public class Textures implements Iterable<Texture> {
      * @return количество текстур.
      */
     public int size() {
-        return this.list.size();
+        return this.map.size();
     }
 
-    @Override
-    public Iterator<Texture> iterator() {
-        return this.list.iterator();
+    /**
+     * @return
+     */
+    public Map<String, Texture> getMap() {
+        return this.map;
     }
 
 }

@@ -22,19 +22,15 @@ public class SkeletonAnimationKeyFrameJsonDeserializer implements
         JsonElement jsonTime = jsonObject.get("time");
         JsonElement jsonBoneKeyFrames = jsonObject.get("boneKeyFrames");
 
-        if (jsonName == null)
-            throw new JsonSyntaxException("\"name\" of undefined");
-        if (jsonTime == null)
-            throw new JsonSyntaxException("\"time\" of undefined");
-        if (jsonBoneKeyFrames == null)
-            throw new JsonSyntaxException("\"boneKeyFrames\" of undefined");
+        if (jsonName == null) throw new JsonSyntaxException("\"name\" of undefined");
+        if (jsonTime == null) throw new JsonSyntaxException("\"time\" of undefined");
+        if (jsonBoneKeyFrames == null) throw new JsonSyntaxException("\"boneKeyFrames\" of undefined");
 
         String name = jsonName.getAsString();
         float time = jsonTime.getAsFloat();
         Map<String, float[]> boneKeyFrames = new HashMap<>();
 
-        for (Entry<String, JsonElement> entry : jsonBoneKeyFrames
-                .getAsJsonObject().entrySet()) {
+        for (Entry<String, JsonElement> entry : jsonBoneKeyFrames.getAsJsonObject().entrySet()) {
             JsonArray jsonBoneFrames = entry.getValue().getAsJsonArray();
 
             int size = jsonBoneFrames.size();

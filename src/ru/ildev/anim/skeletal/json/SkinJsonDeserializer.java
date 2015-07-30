@@ -26,12 +26,9 @@ public class SkinJsonDeserializer implements JsonDeserializer<Skin> {
             throw new JsonSyntaxException("\"patches\" of unefined");
         }
 
-        List<SkinPatch> patches = context.<List<SkinPatch>>deserialize(
-                jsonPatches.getAsJsonArray(), this.patchesType);
+        List<SkinPatch> patches = context.deserialize(jsonPatches.getAsJsonArray(), this.patchesType);
         Skin skin = new Skin();
-        for (SkinPatch skinPatch : patches) {
-            skin.addPatch(skinPatch);
-        }
+        patches.forEach(skin::addPatch);
         return skin;
     }
 }

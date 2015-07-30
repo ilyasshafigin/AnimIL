@@ -38,7 +38,7 @@ public final class SkeletalUtils {
      */
     public static Skeleton loadSkeleton(String path) throws JsonIOException,
             JsonSyntaxException, FileNotFoundException {
-        return SkeletalUtils.loadSkeleton(new File(path));
+        return loadSkeleton(new File(path));
     }
 
     /**
@@ -54,8 +54,8 @@ public final class SkeletalUtils {
             JsonSyntaxException, FileNotFoundException {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Bone.class, new BoneJsonDeserializer())
-                .registerTypeAdapter(Skeleton.class,
-                        new SkeletonJsonDeserializer()).setPrettyPrinting()
+                .registerTypeAdapter(Skeleton.class, new SkeletonJsonDeserializer())
+                .setPrettyPrinting()
                 .create();
         return gson.<Skeleton>fromJson(new FileReader(file), Skeleton.class);
     }
@@ -68,7 +68,7 @@ public final class SkeletalUtils {
      * @return {@code true}, если скелет сохранился.
      */
     public static boolean saveSkeleton(String path, Skeleton skeleton) {
-        return SkeletalUtils.saveSkeleton(new File(path), skeleton);
+        return saveSkeleton(new File(path), skeleton);
     }
 
     /**
@@ -88,8 +88,8 @@ public final class SkeletalUtils {
             FileWriter writer = new FileWriter(file);
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Bone.class, new BoneJsonSerializer())
-                    .registerTypeAdapter(Skeleton.class,
-                            new SkeletonJsonSerializer()).setPrettyPrinting()
+                    .registerTypeAdapter(Skeleton.class, new SkeletonJsonSerializer())
+                    .setPrettyPrinting()
                     .create();
             gson.toJson(skeleton, writer);
 
@@ -115,7 +115,7 @@ public final class SkeletalUtils {
      */
     public static List<SkeletonAnimation> loadAnimations(String path)
             throws JsonIOException, JsonSyntaxException, FileNotFoundException {
-        return SkeletalUtils.loadAnimations(new File(path));
+        return loadAnimations(new File(path));
     }
 
     /**
@@ -130,15 +130,12 @@ public final class SkeletalUtils {
     public static List<SkeletonAnimation> loadAnimations(File file)
             throws JsonIOException, JsonSyntaxException, FileNotFoundException {
         Type animationsListType = new TypeToken<List<SkeletonAnimation>>() {
-        }
-                .getType();
+        }.getType();
+
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(SkeletonAnimation.class,
-                        new SkeletonAnimationJsonDeserializer())
-                .registerTypeAdapter(AnimationOptions.class,
-                        new SkeletonAnimationOptionsJsonDeserializer())
-                .registerTypeAdapter(SkeletonAnimationKeyFrame.class,
-                        new SkeletonAnimationKeyFrameJsonDeserializer())
+                .registerTypeAdapter(SkeletonAnimation.class, new SkeletonAnimationJsonDeserializer())
+                .registerTypeAdapter(AnimationOptions.class, new SkeletonAnimationOptionsJsonDeserializer())
+                .registerTypeAdapter(SkeletonAnimationKeyFrame.class, new SkeletonAnimationKeyFrameJsonDeserializer())
                 .setPrettyPrinting().create();
         return gson.<List<SkeletonAnimation>>fromJson(new FileReader(file),
                 animationsListType);
@@ -151,9 +148,8 @@ public final class SkeletalUtils {
      * @param skeletonAnimations список анимаций.
      * @return {@code true}, если анимации сохранились.
      */
-    public static boolean saveAnimations(String path,
-                                         List<SkeletonAnimation> skeletonAnimations) {
-        return SkeletalUtils.saveAnimations(new File(path), skeletonAnimations);
+    public static boolean saveAnimations(String path, List<SkeletonAnimation> skeletonAnimations) {
+        return saveAnimations(new File(path), skeletonAnimations);
     }
 
     /**
@@ -163,8 +159,7 @@ public final class SkeletalUtils {
      * @param skeletonAnimations список анимаций.
      * @return {@code true}, если анимации сохранились.
      */
-    public static boolean saveAnimations(File file,
-                                         List<SkeletonAnimation> skeletonAnimations) {
+    public static boolean saveAnimations(File file, List<SkeletonAnimation> skeletonAnimations) {
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) {
@@ -173,12 +168,9 @@ public final class SkeletalUtils {
             }
             FileWriter writer = new FileWriter(file);
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(SkeletonAnimation.class,
-                            new SkeletonAnimationJsonSerializer())
-                    .registerTypeAdapter(AnimationOptions.class,
-                            new SkeletonAnimationOptionsJsonSerializer())
-                    .registerTypeAdapter(SkeletonAnimationKeyFrame.class,
-                            new SkeletonAnimationKeyFrameJsonSerializer())
+                    .registerTypeAdapter(SkeletonAnimation.class, new SkeletonAnimationJsonSerializer())
+                    .registerTypeAdapter(AnimationOptions.class, new SkeletonAnimationOptionsJsonSerializer())
+                    .registerTypeAdapter(SkeletonAnimationKeyFrame.class, new SkeletonAnimationKeyFrameJsonSerializer())
                     .setPrettyPrinting().create();
             gson.toJson(skeletonAnimations, writer);
 
@@ -202,9 +194,8 @@ public final class SkeletalUtils {
      * @throws FileNotFoundException если нет файла.
      * @throws JsonSyntaxException   при ошибках в синтаксисе JSON.
      */
-    public static Skin loadSkin(String path) throws JsonSyntaxException,
-            JsonIOException, FileNotFoundException {
-        return SkeletalUtils.loadSkin(new File(path));
+    public static Skin loadSkin(String path) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+        return loadSkin(new File(path));
     }
 
     /**
@@ -216,14 +207,13 @@ public final class SkeletalUtils {
      * @throws FileNotFoundException если нет файла.
      * @throws JsonSyntaxException   при ошибках в синтаксисе JSON.
      */
-    public static Skin loadSkin(File file) throws JsonSyntaxException,
-            JsonIOException, FileNotFoundException {
+    public static Skin loadSkin(File file) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Skin.class, new SkinJsonDeserializer())
-                .registerTypeAdapter(SkinPatch.class,
-                        new SkinPatchJsonDeserializer()).setPrettyPrinting()
+                .registerTypeAdapter(SkinPatch.class, new SkinPatchJsonDeserializer())
+                .setPrettyPrinting()
                 .create();
-        return gson.<Skin>fromJson(new FileReader(file), Skin.class);
+        return gson.fromJson(new FileReader(file), Skin.class);
     }
 
     /**
@@ -234,7 +224,7 @@ public final class SkeletalUtils {
      * @return {@code true}, если скин сохранился.
      */
     public static boolean saveSkin(String path, Skin skin) {
-        return SkeletalUtils.saveSkin(new File(path), skin);
+        return saveSkin(new File(path), skin);
     }
 
     /**
@@ -253,8 +243,7 @@ public final class SkeletalUtils {
             }
             FileWriter writer = new FileWriter(file);
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(SkinPatch.class,
-                            new SkinPatchJsonSerializer())
+                    .registerTypeAdapter(SkinPatch.class, new SkinPatchJsonSerializer())
                     .registerTypeAdapter(Skin.class, new SkinJsonSerializer())
                     .setPrettyPrinting().create();
             gson.toJson(skin, writer);
@@ -264,8 +253,7 @@ public final class SkeletalUtils {
 
             return true;
         } catch (IOException exception) {
-            Animator.LOGGER.throwing(SkeletalUtils.class.getSimpleName(),
-                    "saveSkin", exception);
+            Animator.LOGGER.throwing(SkeletalUtils.class.getSimpleName(), "saveSkin", exception);
             return false;
         }
     }
@@ -279,9 +267,9 @@ public final class SkeletalUtils {
      * @throws FileNotFoundException если нет файла.
      * @throws JsonSyntaxException   при ошибках в синтаксисе JSON.
      */
-    public static Textures loadTextures(String path)
-            throws JsonSyntaxException, JsonIOException, FileNotFoundException {
-        return SkeletalUtils.loadTextures(new File(path));
+    public static Textures loadTextures(String path) throws JsonSyntaxException, JsonIOException,
+            FileNotFoundException {
+        return loadTextures(new File(path));
     }
 
     /**
@@ -293,13 +281,12 @@ public final class SkeletalUtils {
      * @throws FileNotFoundException если нет файла.
      * @throws JsonSyntaxException   при ошибках в синтаксисе JSON.
      */
-    public static Textures loadTextures(File file)
-            throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+    public static Textures loadTextures(File file) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Textures.class,
-                        new TexturesJsonDeserializer(file.getParentFile())).setPrettyPrinting()
+                .registerTypeAdapter(Textures.class, new TexturesJsonDeserializer(file.getParentFile()))
+                .setPrettyPrinting()
                 .create();
-        return gson.<Textures>fromJson(new FileReader(file), Textures.class);
+        return gson.fromJson(new FileReader(file), Textures.class);
     }
 
     /**
@@ -310,7 +297,7 @@ public final class SkeletalUtils {
      * @return {@code true}, если текстуры сохранились.
      */
     public static boolean saveTextures(String path, Textures textures) {
-        return SkeletalUtils.saveTextures(new File(path), textures);
+        return saveTextures(new File(path), textures);
     }
 
     /**
@@ -329,8 +316,8 @@ public final class SkeletalUtils {
             }
             FileWriter writer = new FileWriter(file);
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Textures.class,
-                            new TexturesJsonSerializer()).setPrettyPrinting()
+                    .registerTypeAdapter(Textures.class, new TexturesJsonSerializer())
+                    .setPrettyPrinting()
                     .create();
             gson.toJson(textures, writer);
 
@@ -339,8 +326,7 @@ public final class SkeletalUtils {
 
             return true;
         } catch (IOException exception) {
-            Animator.LOGGER.throwing(SkeletalUtils.class.getSimpleName(),
-                    "saveTextures", exception);
+            Animator.LOGGER.throwing(SkeletalUtils.class.getSimpleName(), "saveTextures", exception);
             return false;
         }
     }
@@ -353,19 +339,18 @@ public final class SkeletalUtils {
      * @param skeleton скелет.
      * @return кадр скелетной анимации.
      */
-    public static SkeletonAnimationKeyFrame createKeyFrame(String name,
-                                                           float time, Skeleton skeleton) {
+    public static SkeletonAnimationKeyFrame createKeyFrame(String name, float time, Skeleton skeleton) {
         Map<String, float[]> boneKeyFrames = new HashMap<>();
         List<Bone> boneList = skeleton.getRoot().toList();
 
-        for (Bone bone : boneList) {
+        skeleton.getRoot().toList().forEach((bone) -> {
             float[] values = new float[4];
             values[0] = bone.getPosition().x;
             values[1] = bone.getPosition().y;
             values[2] = bone.getAngle();
             values[3] = bone.getLength();
             boneKeyFrames.put(bone.getName(), values);
-        }
+        });
 
         return new SkeletonAnimationKeyFrame(name, time, boneKeyFrames);
     }
@@ -376,21 +361,15 @@ public final class SkeletalUtils {
      * @param keyFrame кадр.
      * @param skeleton скелет.
      */
-    public static void applyKeyFrame(SkeletonAnimationKeyFrame keyFrame,
-                                     Skeleton skeleton) {
-        Map<String, float[]> boneKeyFrames = keyFrame.getBoneKeyFrames();
-        for (String boneName : boneKeyFrames.keySet()) {
-            float[] boneKeyFrame = boneKeyFrames.get(boneName);
+    public static void applyKeyFrame(SkeletonAnimationKeyFrame keyFrame, Skeleton skeleton) {
+        keyFrame.getBoneKeyFrames().forEach((boneName, frame) -> {
             Bone bone = skeleton.find(boneName);
-            if (bone == null) continue;
-
-            int size = boneKeyFrame.length;
-
-            if (size >= 1) bone.setX(boneKeyFrame[0]);
-            if (size >= 2) bone.setY(boneKeyFrame[1]);
-            if (size >= 3) bone.setAngle(boneKeyFrame[2]);
-            if (size >= 4) bone.setLength(boneKeyFrame[3]);
-        }
+            if (bone == null) return;
+            if (frame.length >= 1) bone.setX(frame[0]);
+            if (frame.length >= 2) bone.setY(frame[1]);
+            if (frame.length >= 3) bone.setAngle(frame[2]);
+            if (frame.length >= 4) bone.setLength(frame[3]);
+        });
     }
 
     /**
@@ -399,26 +378,21 @@ public final class SkeletalUtils {
      * @param skeleton скелет.
      * @param keyframe кадр.
      */
-    public static void updateKeyFrame(SkeletonAnimationKeyFrame keyframe,
-                                      Skeleton skeleton) {
+    public static void updateKeyFrame(SkeletonAnimationKeyFrame keyframe, Skeleton skeleton) {
         Map<String, float[]> boneKeyFrames = keyframe.getBoneKeyFrames();
-        List<Bone> boneList = skeleton.getRoot().toList();
-
-        for (Bone bone : boneList) {
+        skeleton.getRoot().toList().forEach((bone) -> {
             String name = bone.getName();
-            float[] boneKeyFrame = boneKeyFrames.get(name);
-            if (boneKeyFrame == null) {
-                boneKeyFrame = new float[4];
-                boneKeyFrames.put(name, boneKeyFrame);
+            float[] frame = boneKeyFrames.get(name);
+            if (frame == null) {
+                frame = new float[4];
+                boneKeyFrames.put(name, frame);
             }
 
-            int size = boneKeyFrame.length;
-
-            if (size >= 1) boneKeyFrame[0] = bone.getX();
-            if (size >= 2) boneKeyFrame[1] = bone.getY();
-            if (size >= 3) boneKeyFrame[2] = bone.getAngle();
-            if (size >= 4) boneKeyFrame[3] = bone.getLength();
-        }
+            if (frame.length >= 1) frame[0] = bone.getX();
+            if (frame.length >= 2) frame[1] = bone.getY();
+            if (frame.length >= 3) frame[2] = bone.getAngle();
+            if (frame.length >= 4) frame[3] = bone.getLength();
+        });
     }
 
 }

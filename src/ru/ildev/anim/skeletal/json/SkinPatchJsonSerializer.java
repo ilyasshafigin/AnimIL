@@ -14,8 +14,7 @@ import java.lang.reflect.Type;
 public class SkinPatchJsonSerializer implements JsonSerializer<SkinPatch> {
 
     @Override
-    public JsonElement serialize(SkinPatch skinPatch, Type type,
-                                 JsonSerializationContext context) {
+    public JsonElement serialize(SkinPatch skinPatch, Type type, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("bone", skinPatch.getBoneName());
         jsonObject.addProperty("texture", skinPatch.getTextureName());
