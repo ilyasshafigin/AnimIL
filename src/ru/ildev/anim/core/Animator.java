@@ -26,11 +26,15 @@ import java.util.logging.Logger;
 
 /**
  * Класс аниматор. Контролирует все анимации.
+ * Стандартно запускается в отдельном потоке, но возможно вручную контролировать обновление аниматора,
+ * при этом поддержка заданного FPS невозможна.
  *
  * @author Shafigin Ilyas (Шафигин Ильяс)
  * @version 0.13.44
  */
 public class Animator implements Runnable {
+
+    // --- Статические поля
 
     /**
      * Регистратор.
@@ -45,18 +49,18 @@ public class Animator implements Runnable {
      * Объединение потоков, исполняющих анимации.
      */
     protected static ExecutorService executor = null;
+    /**
+     * Флаг, определяет, будет ли аниматор запускаться о отдельном потоке.
+     */
+    private static boolean inThread = true;
 
-    private static void createExecutor() {
-        executor = Executors.newFixedThreadPool(3);
-    }
+    // --- Статические методы
 
     /**
-     * Устанавливает свой исполнитель.
-     *
-     * @param exec кастомный исполнитель.
+     * Создает стандартный исполнитель.
      */
-    public static void setExecutor(ExecutorService exec) {
-        executor = exec;
+    private static void createExecutor() {
+        executor = Executors.newFixedThreadPool(6);
     }
 
     /**
@@ -85,6 +89,8 @@ public class Animator implements Runnable {
         STOP
 
     }
+
+    // --- Поля
 
     /**
      * Текущее состояние аниматора.
@@ -155,6 +161,8 @@ public class Animator implements Runnable {
      */
     private long next;
 
+    // --- Методы и конструкторы
+
     /**
      * Стандартный конструктор.
      */
@@ -180,6 +188,33 @@ public class Animator implements Runnable {
             instance = new Animator();
         }
         return instance;
+    }
+
+    /**
+     * Устанавливает свой исполнитель.
+     *
+     * @param exec кастомный исполнитель.
+     */
+    public static void setExecutor(ExecutorService exec) {
+        executor = exec;
+    }
+
+    /**
+     * Определяет, будет ли аниматор запускаться о отдельном потоке.
+     *
+     * @return {@code true}, если аниматор будет запускаться в отдельном потоке.
+     */
+    public static boolean isInThread() {
+        return inThread;
+    }
+
+    /**
+     * Устанавливает значение флагу, определяющему, будет ли аниматор запускаться о отдельном потоке.
+     *
+     * @param flag флаг.
+     */
+    public static void setInThread(boolean flag) {
+        inThread = flag;
     }
 
     /**
@@ -351,10 +386,12 @@ public class Animator implements Runnable {
         //Thread timer = new Thread(this, this.getClass().getName() + ".thread");
         //timer.setDaemon(true);
         //timer.start();
-        if (executor == null) {
-            createExecutor();
+        if (inThread) {
+            if (executor == null) {
+                createExecutor();
+            }
+            executor.submit(this);
         }
-        executor.submit(this);
     }
 
     /**
@@ -422,11 +459,14 @@ public class Animator implements Runnable {
     }
 
     /**
-     * Шаг аниматора. Запускается таймером.
+     * Шаг аниматора. Запускается таймером или вручную.
      *
      * @param elapsedTime пройденное время в миллисекундах.
      */
-    private void step(float elapsedTime) {
+    public void update(float elapsedTime) {
+        // Если аниматор не запущен
+        if (this.state != State.START) return;
+
         // Запускаем событие.
         this.listener.onStep();
 
@@ -446,6 +486,17 @@ public class Animator implements Runnable {
         this.animations.stream()
                 .filter(animation -> animation != null && animation.step(elapsedTime))
                 .forEach(this.removed::add);
+
+        // Добавляем анимации.
+        if (!this.added.isEmpty()) {
+            this.animations.addAll(this.added);
+            this.added.clear();
+        }
+        // Удаляем анимации.
+        if (!this.removed.isEmpty()) {
+            this.animations.removeAll(this.removed);
+            this.removed.clear();
+        }
     }
 
     @Override
@@ -463,20 +514,7 @@ public class Animator implements Runnable {
                 this.last = curr;
 
                 // Запускаем шаг.
-                if (this.state != State.PAUSE) {
-                    this.step(dt);
-                }
-
-                // Добавляем анимации.
-                if (!this.added.isEmpty()) {
-                    this.animations.addAll(this.added);
-                    this.added.clear();
-                }
-                // Удаляем анимации.
-                if (!this.removed.isEmpty()) {
-                    this.animations.removeAll(this.removed);
-                    this.removed.clear();
-                }
+                this.update(dt);
 
                 // Синхроризация в соответствии с частотой кадров.
                 if (this.fps > 0) {
