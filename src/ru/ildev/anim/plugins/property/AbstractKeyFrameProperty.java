@@ -10,18 +10,17 @@ import ru.ildev.math.MoreMath;
 /**
  * Абстрактный класс свойства, содержащего ключевые кадры.
  *
- * @param <T> тип свойства.
  * @author Shafigin Ilyas (Шафигин Ильяс) <Ilyas74>
- * @version 1.1.2
+ * @version 2.1.2
  */
-public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements KeyFrameProperty<T> {
+public class AbstractKeyFrameProperty extends AbstractProperty<Float> implements KeyFrameProperty {
 
     /**
      * Ключевые кадры.
      */
-    protected KeyFrame<T>[] keys;
+    protected KeyFrame[] keys;
     /**  */
-    protected Property<T> property;
+    protected Property<Float> property;
 
     /**
      * Стандартный конструктор.
@@ -34,7 +33,7 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
      *
      * @param property свойство.
      */
-    public AbstractKeyFrameProperty(Property<T> property) {
+    public AbstractKeyFrameProperty(Property<Float> property) {
         if (property == null) throw new NullPointerException("property == null");
         this.name = property.getName();
         this.property = property;
@@ -48,11 +47,10 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
      * @param keys     ключевые кадры.
      * @param property свойство.
      */
-    public AbstractKeyFrameProperty(KeyFrame<T>[] keys, Property<T> property) {
+    public AbstractKeyFrameProperty(KeyFrame[] keys, Property<Float> property) {
         this(property);
         if (keys == null) throw new NullPointerException("keys == null");
-        if (keys.length == 0) throw new IllegalArgumentException(
-                "keys.length == 0");
+        if (keys.length == 0) throw new IllegalArgumentException("keys.length == 0");
         this.keys = keys;
     }
 
@@ -61,7 +59,7 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
      *
      * @return ключевые кадры.
      */
-    public KeyFrame<T>[] getKeys() {
+    public KeyFrame[] getKeys() {
         return this.keys;
     }
 
@@ -95,17 +93,15 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
         for (int i = 0; i < this.keys.length; i++)
             if (time >= this.keys[i].time * duration) index = i;
 
-        KeyFrame<T> key1 = this.keys[index];
-        KeyFrame<T> key2 = this.keys[index > this.keys.length - 2 ? index
-                : index + 1];
+        KeyFrame key1 = this.keys[index];
+        KeyFrame key2 = this.keys[index > this.keys.length - 2 ? index : index + 1];
 
         Easing easing = key1.easing != null ? key1.easing : this.easing;
 
         float diff = (key2.time - key1.time) * duration;
         float now = time - key1.time * duration;
         float progress = MoreMath.clamp(now / diff, 0.0f, 1.0f);
-        float position = MoreMath.clamp(
-                easing.ease(progress, now, 0.0f, 1.0f, diff), 0.0f, 1.0f);
+        float position = MoreMath.clamp(easing.ease(progress, now, 0.0f, 1.0f, diff), 0.0f, 1.0f);
 
         this.begin = key1.value;
         this.end = key2.value;
@@ -113,12 +109,12 @@ public class AbstractKeyFrameProperty<T> extends AbstractProperty<T> implements 
     }
 
     @Override
-    public T get() {
+    public Float get() {
         return this.property.get();
     }
 
     @Override
-    public void set(T value) {
+    public void set(Float value) {
         this.property.set(value);
     }
 

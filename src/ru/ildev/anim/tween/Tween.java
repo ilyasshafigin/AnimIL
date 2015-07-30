@@ -1,5 +1,6 @@
 package ru.ildev.anim.tween;
 
+import ru.ildev.anim.core.AnimationConstants;
 import ru.ildev.anim.core.AnimationOptions;
 import ru.ildev.anim.core.Animator;
 import ru.ildev.anim.core.ControllableAnimation;
@@ -14,7 +15,7 @@ import java.util.Map;
  * @author Ilyas Shafigin
  * @since 24.07.15
  */
-public class Tween extends ControllableAnimation {
+public class Tween extends ControllableAnimation implements AnimationConstants {
 
     private static int combinedAttrsLimit = 4;
     private static int waypointsLimit = 0;
