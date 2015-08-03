@@ -13,7 +13,6 @@ import ru.ildev.anim.core.BasicAnimation.BasicAnimationBuilder;
 import ru.ildev.anim.core.ParallelAnimation.ParallelAnimationBuilder;
 import ru.ildev.anim.core.QueueAnimation.QueueAnimationBuilder;
 import ru.ildev.anim.core.TimelineAnimation.TimelineAnimationBuilder;
-import ru.ildev.utils.Builder;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -470,6 +470,12 @@ public class Animator implements Runnable {
         // Запускаем событие.
         this.listener.onStep();
 
+        // Добавляем анимации.
+        if (!this.added.isEmpty()) {
+            this.animations.addAll(this.added);
+            this.added.clear();
+        }
+
         // Если список пуст, то выходим.
         if (this.animations.isEmpty()) return;
         // Проходим по всем анимациям и запускаем их методы шага анимации.
@@ -487,11 +493,6 @@ public class Animator implements Runnable {
                 .filter(animation -> animation != null && animation.step(elapsedTime))
                 .forEach(this.removed::add);
 
-        // Добавляем анимации.
-        if (!this.added.isEmpty()) {
-            this.animations.addAll(this.added);
-            this.added.clear();
-        }
         // Удаляем анимации.
         if (!this.removed.isEmpty()) {
             this.animations.removeAll(this.removed);

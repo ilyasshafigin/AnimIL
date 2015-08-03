@@ -8,7 +8,7 @@ import ru.ildev.anim.events.AnimationEvent;
 import ru.ildev.anim.events.AnimationListener;
 import ru.ildev.anim.plugins.AnimationPlugin;
 import ru.ildev.anim.plugins.PluginList;
-import ru.ildev.utils.Builder;
+import ru.ildev.anim.utils.Builder;
 
 import java.util.*;
 

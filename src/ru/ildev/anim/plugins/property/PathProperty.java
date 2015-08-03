@@ -6,7 +6,7 @@ package ru.ildev.anim.plugins.property;
 import ru.ildev.anim.core.ControllableAnimation;
 import ru.ildev.anim.plugins.property.evaluator.TypeEvaluator;
 import ru.ildev.anim.plugins.property.evaluator.VectorEvaluator;
-import ru.ildev.game.g.curve.Curve;
+import ru.ildev.curve.Curve;
 import ru.ildev.geom.Vector2;
 import ru.ildev.geom.Vector3;
 import ru.ildev.math.MoreMath;

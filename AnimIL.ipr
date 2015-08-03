@@ -9,13 +9,25 @@
         </element>
         <element id="module-output" name="AnimIL" />
         <element id="extracted-dir" path="$PROJECT_DIR$/libs/gson-2.2.4.jar" path-in-jar="/" />
-        <element id="module-output" name="IL" />
       </root>
     </artifact>
     <artifact type="jar" name="AnimIL-0.5.0-sources">
       <output-path>$PROJECT_DIR$/build/jar</output-path>
       <root id="archive" name="AnimIL-0.5.0-sources.jar">
         <element id="dir-copy" path="$PROJECT_DIR$/src" />
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+      </root>
+    </artifact>
+    <artifact type="jar" name="AnimIL-0.5.0-dependencies">
+      <output-path>$PROJECT_DIR$/build/jar</output-path>
+      <root id="archive" name="AnimIL-0.5.0-dependencies.jar">
+        <element id="extracted-dir" path="$PROJECT_DIR$/libs/gson-2.2.4.jar" path-in-jar="/" />
+        <element id="module-output" name="AnimIL" />
+        <element id="module-output" name="CurveIL" />
+        <element id="module-output" name="GeomIL" />
+        <element id="module-output" name="MathIL" />
       </root>
     </artifact>
   </component>
@@ -218,7 +230,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AnimIL.iml" filepath="$PROJECT_DIR$/AnimIL.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../IL/IL.iml" filepath="$PROJECT_DIR$/../IL/IL.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../CurveIL/CurveIL.iml" filepath="$PROJECT_DIR$/../CurveIL/CurveIL.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../GeomIL/GeomIL.iml" filepath="$PROJECT_DIR$/../GeomIL/GeomIL.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MathIL/MathIL.iml" filepath="$PROJECT_DIR$/../MathIL/MathIL.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">

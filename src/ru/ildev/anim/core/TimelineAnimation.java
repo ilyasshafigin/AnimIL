@@ -5,8 +5,8 @@ package ru.ildev.anim.core;
 
 import ru.ildev.anim.easings.Easing;
 import ru.ildev.anim.events.AnimationListener;
+import ru.ildev.anim.utils.Builder;
 import ru.ildev.math.MoreMath;
-import ru.ildev.utils.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
